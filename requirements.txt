@@ -1,0 +1,11 @@
+Flask
+Bootstrap-Flask==2.0.2
+Flask-Migrate==2.7.0
+Flask-Script==2.0.5
+Flask-SQLAlchemy
+Flask-WTF
+Flask-Login
+SQLAlchemy
+WTForms
+Werkzeug
+Jinja2
