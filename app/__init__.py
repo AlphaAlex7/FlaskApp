@@ -20,7 +20,7 @@ def create_app():
     main_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'data.sqlite')
     main_app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
     main_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    main_app.config['SECRET_KEY'] = "0x469f4bc784e6d845"  # flask_password
+    main_app.config['SECRET_KEY'] = "strVerySecret"
     bootstrap.init_app(main_app)
     db.init_app(main_app)
     login_manager.init_app(main_app)
