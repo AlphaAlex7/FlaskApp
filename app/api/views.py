@@ -4,33 +4,39 @@ from flask import render_template, request
 from flask_login import current_user, login_required
 from . import api
 from ..models import Channel, ChannelStatistic, ChannelContent
-from .servises import add_statistic_to_answer, get_update_dict
+from .servises import add_statistic_to_answer, get_update_dict, get_channels_for_user
 
 
 @api.route("/statistic/channel/", methods=["GET"])
 def statistic_channel_for_current_user():
-    if current_user == "AnonymousUser":
-        channels = Channel.query.all()[:3]
-    else:
-        channels = Channel.query.filter_by(author=current_user)
+    channels = get_channels_for_user(current_user)
     answer = get_update_dict()
 
     for channel in channels:
-        add_statistic_to_answer(answer, channel)
+        add_statistic_to_answer(answer, channel, days_delta=int(request.args.get("days_delta", 20)))
 
     return answer
 
 
-@api.route("/statistic/channel/<int:id>/", methods=["GET"])
+@api.route("/statistic/channel/<int:id>", methods=["GET"])
 @login_required
 def statistic_channel_for_id(id):
     channels = Channel.query.filter_by(id=id, author=current_user)
     answer = get_update_dict()
-
+    print(request.args.get("days_delta"))
     for channel in channels:
-        add_statistic_to_answer(answer, channel)
+        add_statistic_to_answer(answer, channel, days_delta=int(request.args.get("days_delta", 20)))
 
     return answer
+
+@api.route("/statistic/channels_droplist/", methods=["GET"])
+def droplist_creater():
+    channels = get_channels_for_user(current_user)
+    options = [
+        {"value": channel.id, "name": channel.name}
+        for channel in channels
+    ]
+    return render_template("droplist.html", title="Все каналы", options=options)
 
 
 @api.route("/statistic/add/", methods=["POST"])

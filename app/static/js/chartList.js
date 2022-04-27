@@ -17,6 +17,7 @@ function getSubscribersChart(divId) {
                 }
             },
             x: {
+                max: Date.now(),
                 label: { // ADD
                     text: "Date",
                     position: 'outer-middle'
@@ -81,5 +82,3 @@ function createBarChart(divId) {
 
 
 }
-
-export {getSubscribersChart, getTestChart, createBarChart}

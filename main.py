@@ -11,15 +11,19 @@ migrate = Migrate(app, db)
 
 @app.shell_context_processor
 def make_shell_context():
-    return dict(db=db, User=User, Role=Role, ChannelStatistic=ChannelStatistic, ChannelContent=ChannelContent,
-                Channel=Channel)
+    return dict(
+        db=db,
+        User=User,
+        Role=Role,
+        ChannelStatistic=ChannelStatistic,
+        ChannelContent=ChannelContent,
+        Channel=Channel
+    )
 
 
 @app.cli.command()
 def make_db():
     """Run deployment tasks."""
-
-
     Role.insert_roles()
     # create_user()
 
@@ -28,7 +32,7 @@ def make_db():
 
 
 @app.cli.command()
-def make_init_db():
+def db_test_data():
     """Run test_data"""
     db.drop_all()
     db.create_all()

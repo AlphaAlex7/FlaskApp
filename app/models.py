@@ -6,10 +6,8 @@ from flask_login import UserMixin, AnonymousUserMixin
 
 
 class Permission:
-    FOLLOW = 1
-    COMMENT = 2
-    WRITE = 4
-    MODERATE = 8
+    SEE = 1
+    SEE_ALL = 2
     ADMIN = 16
 
 
@@ -25,12 +23,9 @@ class Role(db.Model):
     @staticmethod
     def insert_roles():
         roles = {
-            'User': [Permission.FOLLOW, Permission.COMMENT, Permission.WRITE],
-            'Moderator': [Permission.FOLLOW, Permission.COMMENT,
-                          Permission.WRITE, Permission.MODERATE],
-            'Administrator': [Permission.FOLLOW, Permission.COMMENT,
-                              Permission.WRITE, Permission.MODERATE,
-                              Permission.ADMIN],
+            'User': [Permission.SEE],
+            'Moderator': [Permission.SEE, Permission.SEE_ALL],
+            'Administrator': [Permission.SEE, Permission.SEE_ALL,Permission.ADMIN],
         }
         default_role = 'User'
         for r in roles:

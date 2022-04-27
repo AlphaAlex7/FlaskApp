@@ -37,14 +37,15 @@ def create_channel():
 def create_channel_stat():
     channel = Channel.query.all()
     for i in channel:
+        print(f"stat for {i.slug_name}")
         stat = 0
         rand_int = random.randrange(1, 10)
-        for j in range(50):
+        for j in range(50, 0, -1):
             stat += random.randint(1, 50)
             statistic = ChannelStatistic(
                 followers=stat,
                 channel=i,
-                date=(datetime.datetime(2012, 1, rand_int) + datetime.timedelta(days=j))
+                date=(datetime.datetime.now() - datetime.timedelta(days=j + rand_int))
             )
             db.session.add(statistic)
             db.session.commit()
