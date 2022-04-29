@@ -1,9 +1,8 @@
 from flask_migrate import Migrate, upgrade
-import click
 
 from app import create_app, db
 from app.models import User, Role, ChannelStatistic, ChannelContent, Channel
-from app.Init_bd_data import create_user, create_channel, create_channel_stat
+from app.Init_bd_data import create_test_data
 
 app = create_app()
 migrate = Migrate(app, db)
@@ -22,35 +21,12 @@ def make_shell_context():
 
 
 @app.cli.command()
-def make_db():
-    """Run deployment tasks."""
-    Role.insert_roles()
-    # create_user()
-
-    # create_channel()
-    create_channel_stat()
-
-
-@app.cli.command()
-def db_test_data():
-    """Run test_data"""
+def make_init_db():
+    """Drop all data in database and Make test Data"""
     db.drop_all()
     db.create_all()
     upgrade()
-
-    Role.insert_roles()
-    create_user()
-
-    create_channel()
-    create_channel_stat()
-
-
-@app.cli.command()
-def deploy():
-    """Run deployment tasks."""
-    upgrade()
-
-    Role.insert_roles()
+    create_test_data()
 
 
 @app.cli.command()
