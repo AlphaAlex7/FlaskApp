@@ -12,15 +12,13 @@ function getSubscribersChart(divId) {
         axis: {
             y: {
                 label: { // ADD
-                    text: 'Подписчики',
-                    position: 'outer-middle'
+                    text: 'Подписчики'
                 }
             },
             x: {
                 max: Date.now(),
                 label: { // ADD
-                    text: "Date",
-                    position: 'outer-middle'
+                    text: "Дата"
                 },
                 type: 'timeseries',
                 tick: {
@@ -29,6 +27,9 @@ function getSubscribersChart(divId) {
                 }
             }
 
+        },
+        legend: {
+            show: false
         }
     })
 }

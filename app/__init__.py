@@ -21,6 +21,7 @@ def create_app():
     main_app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
     main_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     main_app.config['SECRET_KEY'] = "strVerySecret"
+
     bootstrap.init_app(main_app)
     db.init_app(main_app)
     login_manager.init_app(main_app)

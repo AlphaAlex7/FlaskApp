@@ -14,7 +14,7 @@ function updateData(channelId = "0") {
         console.log(data);
         if (channelId !== 0) {
             data.unload = chart.data().map(elemnt => elemnt.id);
-            console.log(data)
+            console.log(data);
             chart.load(data);
         } else {
             chart.load(data);

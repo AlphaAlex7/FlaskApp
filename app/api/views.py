@@ -36,7 +36,7 @@ def droplist_creater():
         {"value": channel.id, "name": channel.name}
         for channel in channels
     ]
-    return render_template("droplist.html", title="Все каналы", options=options)
+    return render_template("dashboard/droplist.html", title="Все каналы", options=options)
 
 
 @api.route("/statistic/add/", methods=["POST"])

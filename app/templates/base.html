@@ -11,7 +11,7 @@
             <!-- Bootstrap CSS -->
             {{ bootstrap.load_css() }}
             <link href="{{ url_for('static', filename='c3/c3.css') }}" rel="stylesheet">
-            <link href="{{ url_for('static', filename='dashbord.css') }}" rel="stylesheet">
+            <link href="{{ url_for('static', filename='dashboard.css') }}" rel="stylesheet">
         {% endblock %}
         {% block scripts_head %}
             <!-- Load d3.js and c3.js -->
@@ -19,12 +19,13 @@
             <script src="{{ url_for('static', filename='c3/c3.min.js') }}"></script>
             <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
         {% endblock %}
+        <link rel="shortcut icon" href="{{ url_for('static', filename='/svg/chart-pie.svg') }}">
         <title>{% block title %}TG Controller{% endblock %}</title>
     {% endblock %}
 </head>
 <body>
 {#<div class="container">#}
-    {% include 'header.html' %}
+    {% include 'dashboard/header.html' %}
     {% block body %}
 
         {% block content %}

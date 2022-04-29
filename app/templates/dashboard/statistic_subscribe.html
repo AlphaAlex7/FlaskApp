@@ -1,0 +1,42 @@
+{% extends 'dashboard/main.html' %}
+{% block statistic %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Подписчики</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group me-2">
+                <select id="channel" class="form-select btn-outline-secondary me-1"
+                        onchange="selectChange(event)" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                </select>
+                <select id="date" class="form-select btn-outline-secondary"
+                        onchange="selectChangeDate(event)" aria-label="Default select example">
+                    <option value="20" selected>Последние 20 дней</option>
+                    <option value="40">Последние 40 дней</option>
+                    <option value="60">Последние 60 дней</option>
+                    <option value="90">Последние 90 дней</option>
+                </select>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                     stroke-linejoin="round" class="feather feather-calendar" aria-hidden="true">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                This week
+            </button>
+        </div>
+    </div>
+
+    <div id="chart"></div>
+
+    <h2>Section title</h2>
+    <div class="table-responsive">
+        <div id="chart_2"></div>
+    </div>
+{% endblock %}
