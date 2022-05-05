@@ -1,4 +1,5 @@
 {% extends 'dashboard/main.html' %}
+{% from 'macros/droplist.html' import droplist_options %}
 {% block statistic %}
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h1 class="h2">Подписчики</h1>
@@ -6,17 +7,11 @@
             <div class="btn-group me-2">
                 <select id="channel" class="form-select btn-outline-secondary me-1"
                         onchange="selectChange(event)" aria-label="Default select example">
-                    <option selected>Open this select menu</option>
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
+                    {{ droplist_options(title='Все каналы',options=option_channel) }}
                 </select>
                 <select id="date" class="form-select btn-outline-secondary"
                         onchange="selectChangeDate(event)" aria-label="Default select example">
-                    <option value="20" selected>Последние 20 дней</option>
-                    <option value="40">Последние 40 дней</option>
-                    <option value="60">Последние 60 дней</option>
-                    <option value="90">Последние 90 дней</option>
+                    {{ droplist_options(options=option_date) }}
                 </select>
             </div>
             <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
@@ -32,11 +27,21 @@
             </button>
         </div>
     </div>
+    <div class="m-4 rounded text-center p-2 border shadow-sm">
+        <div id="chart"></div>
+    </div>
 
-    <div id="chart"></div>
-
-    <h2>Section title</h2>
-    <div class="table-responsive">
-        <div id="chart_2"></div>
+    <div class="row mb-4">
+    {% for i in [
+    {'name':'Средний прирост подписчиков','info':'за последние 10 дней' ,'chart':'chart_2'},
+    {'name':'Среднее количество просмотров','info':'за последние 10 записей' ,'chart':'chart_3'},
+    {'name':'Средний прирост за сутки','info':'за последние 10 дней' ,'chart':'chart_4'},
+    ] %}
+        <div class="col-lg-3 mx-auto rounded text-center p-2 border shadow-sm">
+            <H5>{{ i.name }}</H5>
+            <p class="text-black-50">{{ i.info }}</p>
+            <div id="{{ i.chart }}"></div>
+        </div>
+        {% endfor %}
     </div>
 {% endblock %}

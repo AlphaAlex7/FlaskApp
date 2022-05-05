@@ -1,0 +1,9 @@
+{% macro droplist_options(title, options) -%}
+    {% if title %}
+        <option selected value="0">{{ title }}</option>
+    {% endif %}
+{% for option in options %}
+    <option value="{{ option.value }}">{{ option.name }}</option>
+{% endfor %}
+
+{%- endmacro  %}
