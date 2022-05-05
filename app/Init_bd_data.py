@@ -56,10 +56,23 @@ def channel_state_generator():
     for i in Channel.query.all():
         stat = 0
         rand_int = random.randrange(1, 10)
-        for j in range(50, 0, -1):
-            stat += random.randint(1, 50)
+        days_delta = random.randrange(1, 10) + 50
+        while True:
+            stat += random.randint(-5, 50)
+
             yield ChannelStatistic(
                 followers=stat,
                 channel=i,
-                date=(datetime.datetime.now() - datetime.timedelta(days=j + rand_int))
+                date=(datetime.datetime.now() - datetime.timedelta(days=days_delta))
             )
+            days_delta -= 1
+
+            if days_delta == 0:
+                break
+
+        stat += random.randint(1, 50)
+        yield ChannelStatistic(
+            followers=stat,
+            channel=i,
+            date=(datetime.datetime.now() - datetime.timedelta(days=days_delta))
+        )
