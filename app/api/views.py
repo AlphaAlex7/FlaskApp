@@ -1,33 +1,32 @@
 from datetime import datetime
-from random import randrange
 from flask import render_template, request
 from flask_login import current_user, login_required
 from . import api
-from ..models import Channel, ChannelStatistic, ChannelContent
-from .servises import add_statistic_to_answer, get_update_dict, get_channels_for_user
+from ..models import Channel
+from ..servises import add_main_statistic_to_answer, get_update_dict, get_channels_for_user, \
+    add_average_subscribers_statistic_to_answer
 
 
-@api.route("/statistic/channel/", methods=["GET"])
+@api.route("/statistic/channel-main-chart/", methods=["GET"])
 def statistic_channel_for_current_user():
-    channels = get_channels_for_user(current_user)
+    channels = get_channels_for_user(current_user, id=request.args.get("channel_id"))
     answer = get_update_dict()
-
     for channel in channels:
-        add_statistic_to_answer(answer, channel, days_delta=int(request.args.get("days_delta", 20)))
-
+        add_main_statistic_to_answer(answer, channel, days_delta=int(request.args.get("days_delta", 20)))
+    print("statistic_channel_for_current_user")
     return answer
 
 
-@api.route("/statistic/channel/<int:id>", methods=["GET"])
-@login_required
-def statistic_channel_for_id(id):
-    channels = Channel.query.filter_by(id=id, author=current_user)
+@api.route("/statistic/channel-average-subscribers/", methods=["GET"])
+def average_subscribers_channel_for_current_user():
+    channels = get_channels_for_user(current_user, id=request.args.get("channel_id"))
     answer = get_update_dict()
-    print(request.args.get("days_delta"))
     for channel in channels:
-        add_statistic_to_answer(answer, channel, days_delta=int(request.args.get("days_delta", 20)))
-
+        add_average_subscribers_statistic_to_answer(answer, channel)
+    print("statistic_channel_for_current_user")
     return answer
+
+
 
 @api.route("/statistic/channels_droplist/", methods=["GET"])
 def droplist_creater():
