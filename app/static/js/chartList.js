@@ -2,7 +2,7 @@ function getSubscribersChart(divId) {
     return c3.generate({
         bindto: divId,
         size: {
-            height: 500,
+            height: 400,
         },
         data: {
             xFormat: '%Y-%m-%d %H:%M:%S',
@@ -41,25 +41,63 @@ function getTestChart(divId) {
             columns: [
                 ['data1', 30, 200, 1000, 400, 150, 250],
                 ['data2', 50, 20, 10, 40, 15, 25]
-            ],
-            type: 'spline',
+            ]
         },
         axis: {
             y: {
                 label: {
                     text: 'X',
                     position: 'outer-middle'
-                }
+                },
+                show: false,
             },
             x: {
                 label: {
                     text: "",
                     position: 'outer-middle'
-                }
+                },
+                show: false,
             }
+        }, legend: {
+            show: false
         }
 
-    })
+    });
+}
+
+function getSplineWithOutAxis(divId) {
+    return c3.generate({
+        bindto: divId,
+        data: {
+            columns: [
+                ['data1', 30, -200, 1000, -400, 150, 250],
+                ['data2', 50, 20, 10, -40, 15, 25]
+            ],
+            type: 'bar'
+        },
+        size: {
+            height: 200,
+        },
+        axis: {
+            y: {
+                label: {
+                    text: 'X',
+                    position: 'outer-middle'
+                },
+                show: false,
+            },
+            x: {
+                label: {
+                    text: "",
+                    position: 'outer-middle'
+                },
+                show: false,
+            }
+        }, legend: {
+            show: false
+        }
+
+    });
 }
 
 function createBarChart(divId) {
