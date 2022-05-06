@@ -13,7 +13,6 @@ def statistic_channel_for_current_user():
     answer = get_update_dict()
     for channel in channels:
         add_main_statistic_to_answer(answer, channel, days_delta=int(request.args.get("days_delta", 20)))
-    print("statistic_channel_for_current_user")
     return answer
 
 
@@ -23,9 +22,8 @@ def average_subscribers_channel_for_current_user():
     answer = get_update_dict()
     for channel in channels:
         add_average_subscribers_statistic_to_answer(answer, channel)
-    print("statistic_channel_for_current_user")
+    answer["columns"].sort(key=lambda x: x[1])
     return answer
-
 
 
 @api.route("/statistic/channels_droplist/", methods=["GET"])

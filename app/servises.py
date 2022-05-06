@@ -23,6 +23,8 @@ def add_main_statistic_to_answer(answer: dict, channel: Channel, days_delta: int
         ChannelStatistic.channel_id == channel.id,
         ChannelStatistic.date > (datetime.datetime.now() - datetime.timedelta(days=days_delta))
     ).all()
+
+    answer["colors"][channel.slug_name] = get_color_for_graf(channel.id)
     answer[f"x_{channel.slug_name}"] = f"x_{channel.slug_name}"
     answer["xs"][channel.slug_name] = f"x_{channel.slug_name}"
     answer["columns"].append([
@@ -35,31 +37,35 @@ def add_main_statistic_to_answer(answer: dict, channel: Channel, days_delta: int
     ])
 
 
+def get_color_for_graf(id):
+    colors = ['#B22222', '#0000ff', '#ADFF2F', '#FFD700', "#ADD8E6", "#0d6efd", "#6610f2", "#6f42c1", "#d63384",
+              "#dc3545", "#fd7e14", "#ffc107", "#198754", "#20c997", "#0dcaf0", "#fff", "#6c757d", "#343a40", "#f8f9fa",
+              "#e9ecef", "#dee2e6", "#ced4da", "#adb5bd", "#6c757d", "#495057", "#343a40", "#212529", "#0d6efd",
+              "#6c757d", "#198754", "#0dcaf0", "#ffc107", "#dc3545", "#f8f9fa"]
+    return colors[id % len(colors)]
+
+
 def add_average_subscribers_statistic_to_answer(answer: dict, channel: Channel) -> None:
     stat = ChannelStatistic.query.filter(
-        ChannelStatistic.channel_id == channel.id).order_by(ChannelStatistic.date)[-6:]
-    print(stat)
+        ChannelStatistic.channel_id == channel.id).order_by(ChannelStatistic.date)[-11:]
+
     new_stat = []
     for i, e in enumerate(stat[:-1]):
-        new_stat.append(stat[i+1].followers - e.followers)
-
-    # answer[f"x_{channel.slug_name}"] = f"x_{channel.slug_name}"
-    # answer["xs"][channel.slug_name] = f"x_{channel.slug_name}"
+        new_stat.append(stat[i + 1].followers - e.followers)
+    print(sum(new_stat))
+    answer["colors"][channel.slug_name] = get_color_for_graf(channel.id)
     answer["columns"].append([
         channel.slug_name,
-        *new_stat
+        sum(new_stat) / len(new_stat)
     ])
-    # answer["columns"].append([
-    #     f"x_{channel.slug_name}",
-    #     *[i.date.strftime('%Y-%m-%d %H:%M:%S') for i in stat]
-    # ])
+
 
 def get_date_for_filter():
     return [
-        {"value": i, "name": i}
+        {"value": i, "name": "за " + str(i) + " дней"}
         for i in [20, 60, 90]
     ]
 
 
 def get_update_dict() -> dict:
-    return {"xs": {}, "columns": [], }
+    return {"xs": {}, "columns": [], "colors": {}}
