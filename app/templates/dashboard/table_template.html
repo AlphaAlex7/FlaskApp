@@ -1,0 +1,20 @@
+<table class="table">
+    <thead>
+    <tr>
+        {% for th in table_head %}
+            <th scope="col">{{ th.name }}</th>
+        {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+    {% for tr in table_row %}
+        <tr>
+{#            <th scope="row">{{ tr.name }}</th>#}
+            {% for row in tr.value %}
+                <td>{{ row }}</td>
+            {% endfor %}
+
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
