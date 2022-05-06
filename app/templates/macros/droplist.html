@@ -3,7 +3,7 @@
         <option selected value="0">{{ title }}</option>
     {% endif %}
 {% for option in options %}
-    <option value="{{ option.value }}">{{ option.name }}</option>
+    <option class="text-center bg-secondary" value="{{ option.value }}">{{ option.name }}</option>
 {% endfor %}
 
 {%- endmacro  %}
