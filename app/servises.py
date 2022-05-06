@@ -2,7 +2,7 @@ import datetime
 from typing import Union
 
 from flask_sqlalchemy import BaseQuery
-from .models import ChannelStatistic, Channel, User, AnonymousUser
+from .models import ChannelStatistic, Channel, User, AnonymousUser, ChannelContent
 
 
 def get_channels_for_user(current_user: Union[User, AnonymousUser], id: int = None) -> BaseQuery:
@@ -38,10 +38,13 @@ def add_main_statistic_to_answer(answer: dict, channel: Channel, days_delta: int
 
 
 def get_color_for_graf(id):
-    colors = ['#B22222', '#0000ff', '#ADFF2F', '#FFD700', "#ADD8E6", "#0d6efd", "#6610f2", "#6f42c1", "#d63384",
-              "#dc3545", "#fd7e14", "#ffc107", "#198754", "#20c997", "#0dcaf0", "#fff", "#6c757d", "#343a40", "#f8f9fa",
-              "#e9ecef", "#dee2e6", "#ced4da", "#adb5bd", "#6c757d", "#495057", "#343a40", "#212529", "#0d6efd",
-              "#6c757d", "#198754", "#0dcaf0", "#ffc107", "#dc3545", "#f8f9fa"]
+    colors = ['#B22222', '#0000ff', '#ADFF2F', '#FFD700', "#ADD8E6", "#0d6efd",
+              "#6610f2", "#6f42c1", "#d63384", "#dc3545", "#fd7e14", "#ffc107",
+              "#198754", "#20c997", "#0dcaf0", "#ffffff", "#6c757d", "#343a40",
+              "#f8f9fa", "#e9ecef", "#dee2e6", "#ced4da", "#adb5bd", "#6c757d",
+              "#495057", "#343a40", "#212529", "#0d6efd", "#6c757d", "#198754",
+              "#0dcaf0", "#ffc107", "#dc3545", "#f8f9fa"]
+
     return colors[id % len(colors)]
 
 
@@ -52,12 +55,30 @@ def add_average_subscribers_statistic_to_answer(answer: dict, channel: Channel) 
     new_stat = []
     for i, e in enumerate(stat[:-1]):
         new_stat.append(stat[i + 1].followers - e.followers)
-    print(sum(new_stat))
     answer["colors"][channel.slug_name] = get_color_for_graf(channel.id)
     answer["columns"].append([
         channel.slug_name,
         sum(new_stat) / len(new_stat)
     ])
+
+
+def add_average_content_views_statistic_to_answer(answer: dict, channel: Channel) -> None:
+    stat = ChannelContent.query.filter(
+        ChannelContent.channel == channel,
+        ChannelContent.pub == True).order_by(ChannelContent.date_pub)[-11:]
+
+    answer["colors"][channel.slug_name] = get_color_for_graf(channel.id)
+    answer["columns"].append([
+        channel.slug_name,
+        sum((i.number_of_views for i in stat)) / len(stat)
+    ])
+
+
+def get_channels_for_menu(channels):
+    return [
+        {"value": channel.id, "name": channel.name, "color": get_color_for_graf(channel.id)}
+        for channel in channels
+    ]
 
 
 def get_date_for_filter():

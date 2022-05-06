@@ -1,0 +1,13 @@
+{% extends 'dashboard/main.html' %}
+{% from 'macros/droplist.html' import droplist_options %}
+{% from 'macros/macrosDrop.html' import droplist %}
+{% block statistic %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Контент</h1>
+    {{url_for('statistic.content', id=2)}}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+{% endblock %}

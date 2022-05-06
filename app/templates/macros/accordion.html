@@ -1,0 +1,29 @@
+{% macro acordion_menu(svg, title, options, func, id) -%}
+    <li class="nav-item">
+        <a class=" nav-link collapsed"
+           type="button" data-bs-toggle="collapse" data-bs-target="#flush-{{id}}" aria-expanded="false"
+           aria-controls="flush-{{id}}">
+            <img src="{{url_for('static', filename=svg)}}" class="bi" width="16" height="16" role="img" title="" alt="">
+            {{title}}
+        </a>
+        <div id="flush-{{id}}" class="accordion-collapse collapse px-0" aria-labelledby="flush-headingOne"
+             >
+            <div class="accordion-body px-0 pt-0">
+                <ul class="nav flex-column">
+                    {% for option in options %}
+                    <li class="nav-item">
+                        <a class="{{ 'nav-link active' if
+                            request.path == url_for(func, id=option.value) else 'nav-link' }}"
+                           style="font-size: 0.75em"
+                            href="{{ url_for(func, id=option.value) }}">
+                            <span class="d-inline-block rounded-circle"
+                                  style="width: .5em; height: .5em;background-color:{{ option.color }}"></span>
+                            {{option.name}}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </li>
+{%- endmacro %}

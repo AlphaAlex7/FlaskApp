@@ -1,6 +1,6 @@
 import datetime
 
-from .models import db, User, Role, Channel, ChannelStatistic
+from .models import db, User, Role, Channel, ChannelStatistic, ChannelContent
 import string
 import random
 
@@ -10,6 +10,7 @@ def create_test_data():
     create_user()
     create_channel()
     create_channel_stat()
+    create_channel_content()
 
 
 def create_role():
@@ -28,6 +29,11 @@ def create_channel():
 
 def create_channel_stat():
     db.session.add_all(channel_state_generator())
+    db.session.commit()
+
+
+def create_channel_content():
+    db.session.add_all(channel_content_generator())
     db.session.commit()
 
 
@@ -50,6 +56,22 @@ def channel_generator():
             name="".join([random.choice(string.ascii_letters) for i in range(20)]),
             author=random.choice(users)
         )
+
+
+def channel_content_generator():
+    channels = Channel.query.all()
+    for channel in channels:
+        for i in range(50):
+            slug = "".join([random.choice(string.ascii_letters) for i in range(10)])
+            yield ChannelContent(
+                title=slug,
+                text_content="".join([random.choice(string.ascii_letters) for i in range(10)]),
+                date_created=datetime.datetime.now(),
+                date_pub=datetime.datetime.now() if i % 5 == 0 else None,
+                number_of_views=random.randrange(100, 5000) if i % 5 == 0 else False,
+                pub=True if i % 5 == 0 else False,
+                channel_id=channel.id
+            )
 
 
 def channel_state_generator():

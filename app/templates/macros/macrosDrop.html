@@ -1,0 +1,24 @@
+{% macro droplist(button_title, title, options, onchange) -%}
+    <div class="dropdown mx-2">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
+                data-bs-toggle="dropdown" aria-expanded="false">
+            {{ button_title }}
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            {% if title %}
+                <li><a class="dropdown-item" onclick="{{ onchange }}" value="0">{{ title }}</a></li>
+            {% endif %}
+            {% for option in options %}
+                <li>
+                    <a class="dropdown-item" onclick="{{ onchange }}" value="{{ option.value }}">
+                        {% if option.color %}
+                            <span class="d-inline-block rounded-circle"
+                                  style="width: .5em; height: .5em;background-color:{{ option.color }}"></span>
+                        {% endif %}
+                        {{ option.name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+{%- endmacro %}

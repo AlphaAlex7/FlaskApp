@@ -146,8 +146,10 @@ class ChannelContent(db.Model):
     text_content = db.Column(db.Text)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
     date_pub = db.Column(db.DateTime, nullable=True)
+    number_of_views = db.Column(db.Integer, nullable=True)
     pub = db.Column(db.Boolean, default=False)
     channel_id = db.Column(db.Integer, db.ForeignKey("channels.id"))
 
     def __repr__(self):
         return f"Content: {self.title}"
+

@@ -44,7 +44,7 @@ function updateAverageFollowersChart() {
 function updateAverageContentChart() {
     console.log(channel_id);
     // fetch("/api/test/").then(response => response.json()).then(data => chart.load(data));
-    fetch("/api/statistic/channel-average-subscribers/?" +
+    fetch("/api/statistic/channel-average-content-views/?" +
         (channel_id !== "0" ? `&channel_id=${channel_id}` : "")
     ).then(response => response.json()).then(data => {
         if (channel_id !== 0) {

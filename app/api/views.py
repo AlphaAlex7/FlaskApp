@@ -4,7 +4,7 @@ from flask_login import current_user, login_required
 from . import api
 from ..models import Channel
 from ..servises import add_main_statistic_to_answer, get_update_dict, get_channels_for_user, \
-    add_average_subscribers_statistic_to_answer
+    add_average_subscribers_statistic_to_answer, add_average_content_views_statistic_to_answer
 
 
 @api.route("/statistic/channel-main-chart/", methods=["GET"])
@@ -22,6 +22,16 @@ def average_subscribers_channel_for_current_user():
     answer = get_update_dict()
     for channel in channels:
         add_average_subscribers_statistic_to_answer(answer, channel)
+    answer["columns"].sort(key=lambda x: x[1])
+    return answer
+
+
+@api.route("/statistic/channel-average-content-views/", methods=["GET"])
+def average_content_views_channel_for_current_user():
+    channels = get_channels_for_user(current_user, id=request.args.get("channel_id"))
+    answer = get_update_dict()
+    for channel in channels:
+        add_average_content_views_statistic_to_answer(answer, channel)
     answer["columns"].sort(key=lambda x: x[1])
     return answer
 
