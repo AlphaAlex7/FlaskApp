@@ -65,15 +65,17 @@ function getTestChart(divId) {
     });
 }
 
-function getSplineWithOutAxis(divId) {
+function getSplineWithOutAxis(divId, labelY = "") {
     return c3.generate({
         bindto: divId,
         data: {
-            columns: [
-                ['data1', 30, -200, 1000, -400, 150, 250],
-                ['data2', 50, 20, 10, -40, 15, 25]
-            ],
-            type: 'bar'
+            columns: [],
+            type: 'bar',
+            labels: {
+                format: function (v, id, i, j) {
+                    return id;
+                }
+            }
         },
         size: {
             height: 200,
@@ -81,10 +83,10 @@ function getSplineWithOutAxis(divId) {
         axis: {
             y: {
                 label: {
-                    text: 'X',
+                    text: labelY,
                     position: 'outer-middle'
                 },
-                show: false,
+                show: labelY === "" ? false : true,
             },
             x: {
                 label: {
@@ -95,6 +97,13 @@ function getSplineWithOutAxis(divId) {
             }
         }, legend: {
             show: false
+        },
+        bar: {
+            width: {
+                ratio: 1// this makes bar width 50% of length between ticks
+            }
+            // or
+            //width: 100 // this makes bar width 100px
         }
 
     });
