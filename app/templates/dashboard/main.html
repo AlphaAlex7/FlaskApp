@@ -7,7 +7,7 @@
                 {% block statistic %}
                     <div class="text-center m-5">
                         <a>Когда-нибудь я доделаю, Обещаю {{'active' if
-                     request.path == url_for("statistic.schedule") }}</a>
+                     request.path == url_for("statistic.schedule", id=2) }}</a>
                     </div>
                 {% endblock %}
             </main>

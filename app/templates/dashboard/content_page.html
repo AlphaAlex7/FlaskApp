@@ -4,10 +4,12 @@
 {% block statistic %}
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h1 class="h2">Контент</h1>
-    {{url_for('statistic.content', id=2)}}
+
     </div>
+    <div id="table"></div>
 {% endblock %}
 
 {% block scripts %}
     {{ super() }}
+    <script src="{{ url_for('static', filename='js/content.js') }}" id_channel="{{ id }}" ></script>
 {% endblock %}

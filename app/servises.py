@@ -74,6 +74,21 @@ def add_average_content_views_statistic_to_answer(answer: dict, channel: Channel
     ])
 
 
+def get_content_for_chanel(current_user, id, page):
+    channel = get_channels_for_user(current_user, id=id).first()
+    content = ChannelContent.query.filter(
+        ChannelContent.channel_id == channel.id).paginate(page, 10, False).items
+    return content
+
+
+def get_table_context(content):
+    table_head = [{"name": i} for i in ["title", "date_created", "date_pub", "number_of_views", "pub"]]
+    table_row = [{"name": element.id,
+                  "value": [element.title, element.date_created, element.date_pub, element.number_of_views,
+                            element.pub]} for element in content]
+    return table_head, table_row
+
+
 def get_channels_for_menu(channels):
     return [
         {"value": channel.id, "name": channel.name, "color": get_color_for_graf(channel.id)}
