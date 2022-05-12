@@ -129,8 +129,8 @@ def get_option_sort_content(id):
         # {"href": url_prefix + "date_pub_desc", "name": "по названию (от Z до A)"},
         # {"href": url_prefix + "number_of_views_asc", "name": "по названию (от Z до A)"},
         {"href": url_prefix + "number_of_views_desc", "name": "по количеству просмотров (по убыванию)"},
-        {"href": url_prefix + "pub_asc", "name": "по сначала не опубликованные"},
-        {"href": url_prefix + "pub_desc", "name": "по сначала опубликованные"},
+        {"href": url_prefix + "pub_asc", "name": "сначала не опубликованные"},
+        {"href": url_prefix + "pub_desc", "name": "сначала опубликованные"},
     ]
 
 
