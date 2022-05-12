@@ -1,15 +1,99 @@
 {% extends 'dashboard/main.html' %}
 {% from 'macros/droplist.html' import droplist_options %}
-{% from 'macros/macrosDrop.html' import droplist %}
+{% from 'macros/macrosDrop.html' import droplist_whitout_js %}
 {% block statistic %}
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h1 class="h2">Контент</h1>
-
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group me-2">
+                {{ droplist_whitout_js(button_title="Сортировать", options=option_sort) }}
+            </div>
+        </div>
     </div>
-    <div id="table"></div>
+    <div>
+        <table class="table table-striped" id="table">
+            <thead id="table_head">
+            <tr>
+                {% for th in table_head %}
+                    <th scope="col">{{ th.name }}</th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody id="table_body ">
+            {% for tr in table_row %}
+                <tr>
+                    <td>{{ tr.title }}</td>
+                    <td>{{ tr.date_created.strftime('%d-%m-%y %H:%M') }}</td>
+                    <td>
+                        {% if tr.pub %}
+                            {{ tr.date_pub.strftime('%d-%m-%y %H:%M') }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if tr.pub %}
+                            {{ tr.number_of_views }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td class="align-content-center">
+                        {% if tr.pub %}
+                            <span class="d-inline-block rounded-circle my-auto"
+                                  style="width: 1.25em; height: 1.25em;background-color: rgba(63, 78, 255, 1)"></span>
+                        {% else %}
+                            <span class="d-inline-block rounded-circle my-auto"
+                                  style="width: 1.25em; height: 1.25em;background-color: rgba(0, 0, 0, 0.4)"></span>
+                        {% endif %}
+                    </td>
+                    {#        {% for row in tr.value %}#}
+                    {#            <td>{{ row }}</td>#}
+                    {#        {% endfor %}#}
+
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            {% if pagination.has_prev %}
+                <li class="page-item">
+                    <a class="page-link"
+                       href="{{ url_for('statistic.content', id=id) }}?page={{ pagination.prev_num }}{{ sorting }}"
+                       tabindex="-1" aria-disabled="true"><</a>
+                </li>
+            {% endif %}
+            {% for page_num in range(1,pagination.pages + 1) %}
+                {% if pagination.page == page_num %}
+                    <li class="page-item disabled">
+                        <a class="page-link">{{ page_num }}</a>
+                    </li>
+                {% elif page_num >= pagination.page - 2 and page_num <= pagination.page + 2 %}
+                    <li class="page-item">
+                        <a class="page-link"
+                           href="{{ url_for('statistic.content', id=id) }}?page={{ page_num }}{{ sorting }}">
+                            {{ page_num }}
+                        </a>
+                    </li>
+                {% endif %}
+                {#            <li class="page-item"><a class="page-link" href="#">2</a></li>#}
+                {#            <li class="page-item"><a class="page-link" href="#">3</a></li>#}
+            {% endfor %}
+            {% if pagination.has_next %}
+                <li class="page-item">
+                    <a class="page-link"
+                       href="{{ url_for('statistic.content', id=id) }}?page=
+                               {{ pagination.next_num }}{{ sorting }}">></a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
 {% endblock %}
 
 {% block scripts %}
     {{ super() }}
-    <script src="{{ url_for('static', filename='js/content.js') }}" id_channel="{{ id }}" ></script>
+    {#    <script src="{{ url_for('static', filename='js/content.js') }}" id_channel="{{ id }}"></script>#}
 {% endblock %}

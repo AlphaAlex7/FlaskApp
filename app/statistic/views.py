@@ -1,8 +1,11 @@
 from flask import render_template, request, redirect, url_for
 from flask_login import current_user
+
 from . import statistic
-from ..servises import get_channels_for_user, get_date_for_filter, get_color_for_graf, get_channels_for_menu, \
-    get_content_for_chanel, get_table_context
+from ..servises import get_channels_for_user, get_date_for_filter, \
+    get_color_for_graf, get_channels_for_menu, \
+    get_content_for_chanel, get_content_table_head, \
+    get_content_table_body, get_option_sort_content
 
 
 @statistic.route("/")
@@ -32,24 +35,31 @@ def subscribe():
 
 @statistic.route("/content/<int:id>/")
 def content(id):
+    sorting = request.args.get("sorting", "title_asc")
+    page = int(request.args.get("page", 1))
+
     channels = get_channels_for_user(current_user)
-    print(get_channels_for_menu(channels))
+    table_head = get_content_table_head()
+
+    content_pagination = get_content_for_chanel(
+        current_user=current_user,
+        id=id,
+        page=page,
+        sorting=sorting
+    )
+
+    table_row = get_content_table_body(content_pagination.items)
+    option_sort = get_option_sort_content(id=id)
+
     return render_template(
         "dashboard/content_page.html",
         channels=get_channels_for_menu(channels),
-        id = id
-    )
-
-
-@statistic.route("/content_table/<int:id>/")
-def content_table(id):
-    content = get_content_for_chanel(current_user=current_user, id=id, page=int(request.args.get("page")))
-    table_head, table_row = get_table_context(content)
-
-    return render_template(
-        "dashboard/table_template.html",
+        id=id,
         table_head=table_head,
-        table_row=table_row
+        table_row=table_row,
+        pagination=content_pagination,
+        sorting="&sorting="+sorting,
+        option_sort=option_sort
     )
 
 
