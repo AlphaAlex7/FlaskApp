@@ -62,14 +62,15 @@ def channel_content_generator():
     channels = Channel.query.all()
     for channel in channels:
         for i in range(50):
+            random_pub = (i%random.randrange(3, 7))==0
             slug = "".join([random.choice(string.ascii_letters) for i in range(10)])
             yield ChannelContent(
                 title=slug,
                 text_content="".join([random.choice(string.ascii_letters) for i in range(10)]),
                 date_created=datetime.datetime.now(),
-                date_pub=datetime.datetime.now() if i % 5 == 0 else None,
-                number_of_views=random.randrange(100, 5000) if i % 5 == 0 else False,
-                pub=True if i % 5 == 0 else False,
+                date_pub=datetime.datetime.now() if random_pub else None,
+                number_of_views=random.randrange(100, 5000) if random_pub else False,
+                pub=True if random_pub else False,
                 channel_id=channel.id
             )
 
