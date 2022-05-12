@@ -8,6 +8,7 @@ function getSubscribersChart(divId) {
             xFormat: '%Y-%m-%d %H:%M:%S',
             columns: [],
             type: 'spline',
+
         },
         axis: {
             y: {

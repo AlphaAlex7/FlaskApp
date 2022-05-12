@@ -20,7 +20,7 @@ function updateDataMainChart() {
         } else {
             mainChart.load(data);
         }
-        mainChart.axis.range({max: {x: Date.now()}, min: {x: Date.now() - ((days_delta - 1) * 24 * 3600 * 1000)}});
+        mainChart.axis.range({max: {x: Date.now()}, min: {x: Date.now() - ((days_delta) * 24 * 3600 * 1000)}});
     });
 
 }
