@@ -1,8 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, TextAreaField, SelectField, DateTimeField
-from wtforms.validators import DataRequired, Length, Regexp, EqualTo, ValidationError
+from wtforms import StringField, SubmitField, TextAreaField, SelectField
+from wtforms.validators import DataRequired, Length
 
-from ..models import ChannelContent
 
 
 class ContentDetailForm(FlaskForm):
