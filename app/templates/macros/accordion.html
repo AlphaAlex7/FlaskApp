@@ -1,6 +1,6 @@
 {% macro acordion_menu(svg, title, options, func, id) -%}
     <li class="nav-item">
-        <a class=" nav-link collapsed accordion-button px-3 py-2" style="font-size: 14px"
+        <a class=" nav-link collapsed accordion-button px-3 py-2 bg-light" style="font-size: 14px"
            type="button" data-bs-toggle="collapse" data-bs-target="#flush-{{id}}" aria-expanded="false"
            aria-controls="flush-{{id}}">
             <img src="{{url_for('static', filename=svg)}}" class="bi me-2" width="16" height="16" role="img" title="" alt="">

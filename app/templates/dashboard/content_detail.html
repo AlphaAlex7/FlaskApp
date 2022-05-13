@@ -1,0 +1,41 @@
+{% extends 'dashboard/main.html' %}
+{% from 'bootstrap5/form.html' import render_form %}
+
+{% block statistic %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Контент</h1>
+    </div>
+    <div class="row">
+        <div class="col-5 mx-2">
+            {{ render_form(form) }}
+            {#        </div>#}
+            {#        <div class="col-5 mx-auto">#}
+            {% if post %}
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h5 class="h5">Дополнительная информация</h5>
+                </div>
+                <table class="table table-hover" id="table">
+                    <tbody id="table_body">
+                    <tr>
+                        <td>Дата создания</td>
+                        <td>{{ post.date_created.strftime('%d.%m.%Y %H:%M') }}</td>
+                    </tr>
+                    <tr>
+                        <td>Дата публикации</td>
+                        <td>{{ post.date_pub.strftime('%d.%m.%Y %H:%M') if post.date_pub else '-' }}</td>
+                    </tr>
+                    <tr>
+                        <td>Число просмотров</td>
+                        <td>{{ post.number_of_views if post.number_of_views else '-' }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    {#    <script src="{{ url_for('static', filename='js/content.js') }}" id_channel="{{ id }}"></script>#}
+{% endblock %}

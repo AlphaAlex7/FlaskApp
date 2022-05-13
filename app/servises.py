@@ -87,7 +87,7 @@ def get_content_for_chanel(current_user, id: int, page: int, sorting: str) -> Pa
     content = ChannelContent.query \
         .filter(ChannelContent.channel_id == channel.id) \
         .order_by(*content_sort_order(sorting)) \
-        .paginate(page, 10, False)
+        .paginate(page, 20, False)
 
     return content
 
@@ -105,6 +105,13 @@ def content_sort_order(sorting: str) -> tuple:
             return (ChannelContent.title,)
         else:
             return (desc(ChannelContent.title),)
+
+
+def do_disable_forms(form):
+    """for post forms"""
+    for field in form._fields:
+        form[field].render_kw = {'disabled': 'disabled'}
+        form[field].description = "Запись уже опубликована"
 
 
 def get_content_table_head():
