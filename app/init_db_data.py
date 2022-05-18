@@ -77,7 +77,7 @@ def channel_content_generator():
                 text_content="".join([random.choice(string.ascii_letters) for i in range(10)]),
                 date_created=date_created,
                 date_pub=date_pub if random_pub else None,
-                number_of_views=random.randrange(100, 5000) if random_pub else False,
+                number_of_views=random.randrange(100, 5000) if random_pub else None,
                 pub=True if random_pub else False,
                 channel_id=channel.id
             )
