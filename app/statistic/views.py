@@ -7,7 +7,8 @@ from ..servises import get_channels_for_user, get_date_for_filter, \
     get_color_for_graf, get_channels_for_menu, \
     get_content_for_chanel, get_content_table_head, \
     get_content_table_body, get_option_sort_content, do_disable_forms, form_to_model, \
-    get_regular_schedule, get_regular_schedule_table_body, get_regular_schedule_table_head, model_to_form
+    get_regular_schedule, get_regular_schedule_table_body, get_regular_schedule_table_head, model_to_form, \
+    get_content_schedule, get_content_schedule_table_head, get_content_schedule_table_body
 from .forms import ContentDetailForm, RegularScheduleForm
 from ..models import ChannelContent, ScheduleRegularType, ScheduleRegular
 
@@ -106,8 +107,6 @@ def content_detail():
                 url_for("statistic.content", id=form.channel_id.data))
 
 
-
-
 @statistic.route("/schedule/<int:id>", methods=["GET", "POST"])
 def schedule(id):
     page = int(request.args.get("page", 1))
@@ -123,7 +122,7 @@ def schedule(id):
     table_row = get_regular_schedule_table_body(regular_schedule_pagination.items)
 
     return render_template(
-        "dashboard/schedule.html",
+        "dashboard/regular_schedule.html",
         channels=get_channels_for_menu(channels),
         id=id,
         table_head=table_head,
@@ -172,3 +171,27 @@ def schedule_regular_form(id_channel):
 
         return redirect(
             url_for("statistic.schedule", id=id_channel))
+
+
+@statistic.route("/content_schedule/<int:id>", methods=["GET", "POST"])
+def content_schedule(id):
+    page = int(request.args.get("page", 1))
+    channels = get_channels_for_user(current_user)
+
+    try:
+        current_channel = next(filter(lambda x: x.id == id, channels))
+    except StopIteration:
+        current_channel = None
+
+    content_schedule_pagination = get_content_schedule(current_channel, page=page)
+    table_head = get_content_schedule_table_head()
+    table_row = get_content_schedule_table_body(content_schedule_pagination.items)
+
+    return render_template(
+        "dashboard/content_schedule.html",
+        channels=get_channels_for_menu(channels),
+        id=id,
+        table_head=table_head,
+        table_row=table_row,
+        pagination=content_schedule_pagination
+    )

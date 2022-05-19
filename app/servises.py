@@ -138,6 +138,13 @@ def get_regular_schedule(channel, page):
         .paginate(page, 20, False)
 
 
+def get_content_schedule(channel, page):
+    return ScheduleContent.query \
+        .filter(ScheduleRegular.channel_id == channel.id) \
+        .order_by(ScheduleContent.datetime_pub) \
+        .paginate(page, 20, False)
+
+
 def get_option_sort_content(id):
     url_prefix = url_for("statistic.content", id=id) + "?sorting="
     return [
@@ -173,6 +180,14 @@ def get_regular_schedule_table_head():
     return table_head
 
 
+def get_content_schedule_table_head():
+    table_head = [
+        {'name': 'Дата публикации', "id": "datetime_pub"},
+        {'name': 'Пост', "id": "content_id"}
+    ]
+    return table_head
+
+
 def get_content_table_body(content):
     table_row = [{"id": element.id,
                   "title": element.title,
@@ -188,6 +203,15 @@ def get_regular_schedule_table_body(content):
     table_row = [{"id": element.id,
                   "time_pub": element.time_pub,
                   "content_type": element.content_type.name
+                  }
+                 for element in content]
+    return table_row
+
+
+def get_content_schedule_table_body(content):
+    table_row = [{"id": element.id,
+                  "time_pub": element.datetime_pub,
+                  "content_type": element.content.title
                   }
                  for element in content]
     return table_row
