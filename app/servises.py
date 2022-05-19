@@ -6,7 +6,8 @@ from flask import url_for
 from flask_sqlalchemy import BaseQuery, Pagination
 from sqlalchemy import asc, desc
 
-from .models import ChannelStatistic, Channel, User, AnonymousUser, ChannelContent
+from .models import ChannelStatistic, Channel, User, \
+    AnonymousUser, ChannelContent, ScheduleContent, ScheduleRegular, ScheduleRegularType
 
 
 def get_channels_for_user(current_user: Union[User, AnonymousUser], id: int = None) -> BaseQuery:
@@ -114,15 +115,11 @@ def do_disable_forms(form):
         form[field].description = "Запись уже опубликована"
 
 
-def get_content_table_head():
-    table_head = [
-        {'name': 'Заголовок', "id": "title"},
-        {'name': 'Дата создания', "id": "date_created"},
-        {'name': 'Дата публикации', "id": "date_pub"},
-        {'name': 'Просмотры', "id": "number_of_views"},
-        {'name': 'Опубликовано', "id": "pub"},
-    ]
-    return table_head
+def get_regular_schedule(channel, page):
+    return ScheduleRegular.query \
+        .filter(ScheduleRegular.channel_id == channel.id)\
+        .order_by(ScheduleRegular.time_pub)\
+        .paginate(page, 20, False)
 
 
 def get_option_sort_content(id):
@@ -141,6 +138,25 @@ def get_option_sort_content(id):
     ]
 
 
+def get_content_table_head():
+    table_head = [
+        {'name': 'Заголовок', "id": "title"},
+        {'name': 'Дата создания', "id": "date_created"},
+        {'name': 'Дата публикации', "id": "date_pub"},
+        {'name': 'Просмотры', "id": "number_of_views"},
+        {'name': 'Опубликовано', "id": "pub"},
+    ]
+    return table_head
+
+
+def get_regular_schedule_table_head():
+    table_head = [
+        {'name': 'Время публикации', "id": "time_pub"},
+        {'name': 'Тип контента', "id": "content_type"}
+    ]
+    return table_head
+
+
 def get_content_table_body(content):
     table_row = [{"id": element.id,
                   "title": element.title,
@@ -148,6 +164,15 @@ def get_content_table_body(content):
                   "date_pub": element.date_pub,
                   "number_of_views": element.number_of_views,
                   "pub": element.pub}
+                 for element in content]
+    return table_row
+
+
+def get_regular_schedule_table_body(content):
+    table_row = [{"id": element.id,
+                  "time_pub": element.time_pub,
+                  "content_type": element.content_type.name
+                  }
                  for element in content]
     return table_row
 

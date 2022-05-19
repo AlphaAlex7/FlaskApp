@@ -1,9 +1,10 @@
 import os
+
 from flask import Flask
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap5
-
+from .config import LocalConfig, DockerConfig
 bootstrap = Bootstrap5()
 db = SQLAlchemy()
 
@@ -14,14 +15,18 @@ login_manager.login_view = 'auth.login'
 
 def create_app():
     main_app = Flask(__name__)
-
-    basedir = os.path.abspath(os.path.dirname(__file__))
-
-    main_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'data.sqlite')
-    main_app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
-    main_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    main_app.config['SECRET_KEY'] = "strVerySecret"
-
+    if os.environ.get("DOCKER"):
+        main_app.config.from_object(DockerConfig)
+    else:
+        main_app.config.from_object(LocalConfig)
+    # basedir = os.path.abspath(os.path.dirname(__file__))
+    #
+    # main_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+    # main_app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
+    # main_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    # main_app.config['SECRET_KEY'] = "strVerySecret"
+    # main_app.config["CELERY_BROKER_URL"] = 'redis://localhost:6379'
+    # main_app.config["CELERY_RESULT_BACKEND"] = 'redis://localhost:6379'
     bootstrap.init_app(main_app)
     db.init_app(main_app)
     login_manager.init_app(main_app)

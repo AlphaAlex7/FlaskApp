@@ -1,6 +1,10 @@
 import datetime
 
-from .models import db, User, Role, Channel, ChannelStatistic, ChannelContent
+from sqlalchemy.sql.expression import func
+
+from .models import db, User, Role, \
+    Channel, ChannelStatistic, ChannelContent, \
+    ScheduleContent, ScheduleRegular, ScheduleRegularType
 import string
 import random
 
@@ -11,6 +15,8 @@ def create_test_data():
     create_channel()
     create_channel_stat()
     create_channel_content()
+    create_schedule_content()
+    create_schedule_regular()
 
 
 def create_role():
@@ -34,6 +40,16 @@ def create_channel_stat():
 
 def create_channel_content():
     db.session.add_all(channel_content_generator())
+    db.session.commit()
+
+
+def create_schedule_content():
+    db.session.add_all(schedule_content_generator())
+    db.session.commit()
+
+
+def create_schedule_regular():
+    db.session.add_all(schedule_regular_generator())
     db.session.commit()
 
 
@@ -107,3 +123,28 @@ def channel_state_generator():
             channel=i,
             date=(datetime.datetime.now() - datetime.timedelta(days=days_delta))
         )
+
+
+def schedule_content_generator():
+    for channel in Channel.query.all():
+        content = ChannelContent.query.filter_by(channel_id=channel.id).order_by(func.random()).limit(13).all()
+
+        for i in content:
+            date = datetime.datetime.now() + datetime.timedelta(days=random.randrange(2, 10),
+                                                                hours=random.randrange(0, 20))
+            yield ScheduleContent(
+                channel_id=i.channel_id,
+                content_id=i.id,
+                datetime_pub=date,
+            )
+
+
+def schedule_regular_generator():
+    for i in Channel.query.all():
+        for _ in range(5):
+            time = datetime.time(hour=random.randrange(0, 23), minute=10)
+            yield ScheduleRegular(
+                channel_id=i.id,
+                time_pub=time,
+                content_type=random.choice(list(ScheduleRegularType))
+            )

@@ -1,4 +1,5 @@
 from datetime import datetime
+from enum import Enum
 
 from . import db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -25,7 +26,7 @@ class Role(db.Model):
         roles = {
             'User': [Permission.SEE],
             'Moderator': [Permission.SEE, Permission.SEE_ALL],
-            'Administrator': [Permission.SEE, Permission.SEE_ALL,Permission.ADMIN],
+            'Administrator': [Permission.SEE, Permission.SEE_ALL, Permission.ADMIN],
         }
         default_role = 'User'
         for r in roles:
@@ -115,6 +116,7 @@ class Channel(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     statistics = db.relationship("ChannelStatistic", backref="channel", lazy="dynamic")
     content = db.relationship("ChannelContent", backref="channel", lazy="dynamic")
+    schedule_regular = db.relationship("ScheduleRegular", backref="channel", lazy="dynamic")
 
     def __repr__(self):
         return f"Chanel: {self.slug_name}"
@@ -153,3 +155,26 @@ class ChannelContent(db.Model):
     def __repr__(self):
         return f"Content: {self.title}"
 
+
+class ScheduleRegularType(Enum):
+    NEW = 0
+    OLD = 1
+    RANDOM = 2
+
+
+class ScheduleRegular(db.Model):
+    __tablename__ = "schedule_regular"
+
+    id = db.Column(db.Integer, primary_key=True)
+    channel_id = db.Column(db.Integer, db.ForeignKey("channels.id"))
+    content_type = db.Column(db.Enum(ScheduleRegularType), default=ScheduleRegularType.NEW)
+    time_pub = db.Column(db.TIME)
+
+
+class ScheduleContent(db.Model):
+    __tablename__ = "schedule_content"
+
+    id = db.Column(db.Integer, primary_key=True)
+    channel_id = db.Column(db.Integer, db.ForeignKey("channels.id"))
+    content_id = db.Column(db.Integer, db.ForeignKey("channel_content.id"))
+    datetime_pub = db.Column(db.DateTime)

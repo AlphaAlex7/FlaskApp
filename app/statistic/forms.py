@@ -1,7 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, TextAreaField, SelectField
+from wtforms import StringField, SubmitField, TextAreaField, SelectField, TimeField
 from wtforms.validators import DataRequired, Length
-
 
 
 class ContentDetailForm(FlaskForm):
@@ -13,3 +12,17 @@ class ContentDetailForm(FlaskForm):
     )
     channel_id = SelectField('Канал', validate_choice=False, coerce=int)
     submit = SubmitField('Сохранить')
+
+
+class RegularScheduleForm(FlaskForm):
+    time_pub = TimeField(
+        "Время публикации",
+        validators=[DataRequired()],
+        render_kw={"style": "width: auto"}
+    )
+    content_type = SelectField(
+        "Тип контента",
+        render_kw={"style": "width: auto"}
+    )
+    submit = SubmitField('Сохранить')
+    delete = SubmitField('Удалить')
