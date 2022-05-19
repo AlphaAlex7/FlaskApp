@@ -6,8 +6,8 @@ from .. import db
 from ..servises import get_channels_for_user, get_date_for_filter, \
     get_color_for_graf, get_channels_for_menu, \
     get_content_for_chanel, get_content_table_head, \
-    get_content_table_body, get_option_sort_content, do_disable_forms, \
-    get_regular_schedule, get_regular_schedule_table_body, get_regular_schedule_table_head
+    get_content_table_body, get_option_sort_content, do_disable_forms, form_to_model, \
+    get_regular_schedule, get_regular_schedule_table_body, get_regular_schedule_table_head, model_to_form
 from .forms import ContentDetailForm, RegularScheduleForm
 from ..models import ChannelContent, ScheduleRegularType, ScheduleRegular
 
@@ -76,35 +76,36 @@ def content_detail():
     id_channel = int(request.args.get("id_channel", 0))
     post = None
 
-    if form.validate_on_submit():
+    if request.method == "GET":
         if id_post:
             post = ChannelContent.query.get(id_post)
-        else:
-            post = ChannelContent()
-        post.title = form.title.data
-        post.text_content = form.text_content.data
-        post.channel_id = form.channel_id.data
-        db.session.add(post)
-        db.session.commit()
-        return redirect(
-            url_for("statistic.content", id=form.channel_id.data))
+            model_to_form(form, post)
+            if post.pub:
+                do_disable_forms(form)
+        elif id_channel:
+            form.channel_id.data = id_channel
 
-    if id_post:
-        post = ChannelContent.query.get(id_post)
-        form.channel_id.data = post.channel_id
-        form.title.data = post.title
-        form.text_content.data = post.text_content
-        if post.pub:
-            do_disable_forms(form)
-    elif id_channel:
-        form.channel_id.data = id_channel
+        return render_template(
+            "dashboard/content_detail.html",
+            form=form,
+            channels=get_channels_for_menu(channels),
+            post=post
+        )
 
-    return render_template(
-        "dashboard/content_detail.html",
-        form=form,
-        channels=get_channels_for_menu(channels),
-        post=post
-    )
+    else:
+        if form.validate_on_submit():
+            if id_post:
+                post = ChannelContent.query.get(id_post)
+            else:
+                post = ChannelContent()
+
+            form_to_model(form, post)
+            db.session.add(post)
+            db.session.commit()
+            return redirect(
+                url_for("statistic.content", id=form.channel_id.data))
+
+
 
 
 @statistic.route("/schedule/<int:id>", methods=["GET", "POST"])
@@ -116,10 +117,11 @@ def schedule(id):
         current_channel = next(filter(lambda x: x.id == id, channels))
     except StopIteration:
         current_channel = None
+
     regular_schedule_pagination = get_regular_schedule(current_channel, page=page)
     table_head = get_regular_schedule_table_head()
     table_row = get_regular_schedule_table_body(regular_schedule_pagination.items)
-    print(regular_schedule_pagination.pages)
+
     return render_template(
         "dashboard/schedule.html",
         channels=get_channels_for_menu(channels),
@@ -140,8 +142,9 @@ def schedule_regular_form(id_channel):
         action = url_for("statistic.schedule_regular_form", id_channel=id_channel)
         if id_schedule:
             regular_schedule = ScheduleRegular.query.get(id_schedule)
-            form_regular_schedule.time_pub.data = regular_schedule.time_pub
-            form_regular_schedule.content_type.data = regular_schedule.content_type.name
+
+            model_to_form(form_regular_schedule, regular_schedule)
+
             action += f"?id_schedule_regular={id_schedule}"
         else:
             form_regular_schedule.delete.render_kw = {"hidden": ""}
@@ -151,7 +154,6 @@ def schedule_regular_form(id_channel):
             action=action)
     else:
         if form_regular_schedule.validate_on_submit():
-            print(form_regular_schedule.delete.data)
             if id_schedule:
                 regular_schedule = ScheduleRegular.query.get(id_schedule)
                 if form_regular_schedule.delete.data:
@@ -162,8 +164,7 @@ def schedule_regular_form(id_channel):
             else:
                 regular_schedule = ScheduleRegular()
 
-            regular_schedule.time_pub = form_regular_schedule.time_pub.data
-            regular_schedule.content_type = form_regular_schedule.content_type.data
+            form_to_model(form_regular_schedule, regular_schedule)
             regular_schedule.channel_id = id_channel
 
             db.session.add(regular_schedule)

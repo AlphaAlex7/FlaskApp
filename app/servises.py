@@ -110,15 +110,31 @@ def content_sort_order(sorting: str) -> tuple:
 
 def do_disable_forms(form):
     """for post forms"""
-    for field in form._fields:
-        form[field].render_kw = {'disabled': 'disabled'}
-        form[field].description = "Запись уже опубликована"
+    for field in form:
+        form[field.name].render_kw = {'disabled': 'disabled'}
+        form[field.name].description = "Запись уже опубликована"
+
+
+def form_to_model(form, model):
+    for field in form:
+        if hasattr(model, field.name):
+            model.__setattr__(field.name, form[field.name].data)
+            print(field.name, form[field.name].data)
+    return model
+
+
+def model_to_form(form, model):
+    for field in form:
+        if hasattr(model, field.name):
+            form[field.name].data = model.__getattribute__(field.name)
+            print(field.name, form[field.name].data)
+    return model
 
 
 def get_regular_schedule(channel, page):
     return ScheduleRegular.query \
-        .filter(ScheduleRegular.channel_id == channel.id)\
-        .order_by(ScheduleRegular.time_pub)\
+        .filter(ScheduleRegular.channel_id == channel.id) \
+        .order_by(ScheduleRegular.time_pub) \
         .paginate(page, 20, False)
 
 
