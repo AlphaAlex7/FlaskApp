@@ -140,7 +140,7 @@ def get_regular_schedule(channel, page):
 
 def get_content_schedule(channel, page):
     return ScheduleContent.query \
-        .filter(ScheduleRegular.channel_id == channel.id) \
+        .filter(ScheduleContent.channel_id == channel.id) \
         .order_by(ScheduleContent.datetime_pub) \
         .paginate(page, 20, False)
 

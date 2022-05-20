@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, TextAreaField, SelectField, TimeField
+from wtforms import StringField, SubmitField, TextAreaField, SelectField, TimeField, DateTimeField
 from wtforms.validators import DataRequired, Length
 
 
@@ -26,3 +26,21 @@ class RegularScheduleForm(FlaskForm):
     )
     submit = SubmitField('Сохранить')
     delete = SubmitField('Удалить')
+
+
+class ContentScheduleAddForm(FlaskForm):
+    datetime_pub = DateTimeField(
+        "Дата и время публикации",
+        validators=[DataRequired()],
+        render_kw={"style": "width: auto"}
+    )
+    submit = SubmitField('Сохранить')
+
+
+class ContentScheduleRemoveForm(FlaskForm):
+    datetime_pub = DateTimeField(
+        "Дата и время публикации",
+        validators=[DataRequired()],
+        render_kw={"style": "width: auto", 'disabled': 'disabled'}
+    )
+    submit = SubmitField('Удалить из расписания')

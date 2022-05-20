@@ -6,9 +6,9 @@
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h1 class="h2">Расписания</h1>
                         <div class="btn-toolbar mb-2 mb-md-0">
-                            <div class="btn-group me-2">
-                                <a class="btn btn-outline-primary" href="{{ url_for('statistic.schedule', id=id) }}">aa</a>
-                                <a class="btn btn-outline-primary" href="{{ url_for('statistic.content_schedule', id=id) }}">bb</a>
+                            <div class="btn-g roup me-2">
+                                <a class="btn btn-outline-primary" href="{{ url_for('statistic.schedule', id=id) }}">Регулярное расписание</a>
+                                <a class="btn btn-outline-primary" href="{{ url_for('statistic.content_schedule', id=id) }}">Расписание постов</a>
                             </div>
                         </div>
     </div>
@@ -17,7 +17,3 @@
     {% endblock %}
 {% endblock %}
 
-{% block scripts %}
-    {{ super() }}
-    <script src="{{ url_for('static', filename='js/shedule.js') }}" id_channel="{{ id }}"></script>
-{% endblock %}

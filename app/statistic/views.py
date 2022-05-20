@@ -8,9 +8,9 @@ from ..servises import get_channels_for_user, get_date_for_filter, \
     get_content_for_chanel, get_content_table_head, \
     get_content_table_body, get_option_sort_content, do_disable_forms, form_to_model, \
     get_regular_schedule, get_regular_schedule_table_body, get_regular_schedule_table_head, model_to_form, \
-    get_content_schedule, get_content_schedule_table_head, get_content_schedule_table_body
-from .forms import ContentDetailForm, RegularScheduleForm
-from ..models import ChannelContent, ScheduleRegularType, ScheduleRegular
+    get_content_schedule, get_content_schedule_table_head, get_content_schedule_table_body, get_content_for_form_options
+from .forms import ContentDetailForm, RegularScheduleForm, ContentScheduleAddForm, ContentScheduleRemoveForm
+from ..models import ChannelContent, ScheduleRegularType, ScheduleRegular, ScheduleContent
 
 
 @statistic.route("/")
@@ -103,8 +103,7 @@ def content_detail():
             form_to_model(form, post)
             db.session.add(post)
             db.session.commit()
-            return redirect(
-                url_for("statistic.content", id=form.channel_id.data))
+            return redirect(f'{url_for("statistic.content_detail")}?id_post={post.id}')
 
 
 @statistic.route("/schedule/<int:id>", methods=["GET", "POST"])
@@ -184,6 +183,7 @@ def content_schedule(id):
         current_channel = None
 
     content_schedule_pagination = get_content_schedule(current_channel, page=page)
+
     table_head = get_content_schedule_table_head()
     table_row = get_content_schedule_table_body(content_schedule_pagination.items)
 
