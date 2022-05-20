@@ -1,0 +1,43 @@
+{% extends 'dashboard/schedule.html' %}
+{% from 'macros/droplist.html' import droplist_options %}
+{% from 'macros/macrosDrop.html' import droplist_whitout_js %}
+{% from'macros/pagination.html' import pagination_bootstrap %}
+{% block statistic_table %}
+    <div class="row" id="regular">
+        <div class="col-md-5">
+            <div>
+                <table class="table table-hover " id="table">
+                    <thead class="table-secondary" id="table_head">
+                    <tr>
+                        {% for th in table_head %}
+                            <th scope="col">{{ th.name }}</th>
+                        {% endfor %}
+                    </tr>
+                    </thead>
+                    <tbody id="table_body">
+                    {% for tr in table_row %}
+                        <tr class="table-row"  data-value="{{ tr.id }}" >
+                            <td>{{ tr.time_pub.strftime('%H:%M') }}</td>
+                            <td>
+                                {{ tr.content_type }}
+                            </td>
+
+
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+
+            {{ pagination_bootstrap(url=url_for('statistic.schedule', id=id), pagination=pagination) }}
+        </div>
+        <div class="col-5 mx-4" id="form_regular">
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+        <script src="{{ url_for('static', filename='js/shedule.js') }}" id_channel="{{ id }}"></script>
+{% endblock %}
