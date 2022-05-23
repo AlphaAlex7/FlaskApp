@@ -4,6 +4,7 @@ from enum import Enum
 from . import db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, AnonymousUserMixin
+from sqlalchemy.orm import backref
 
 
 class Permission:
@@ -151,7 +152,6 @@ class ChannelContent(db.Model):
     number_of_views = db.Column(db.Integer, nullable=True)
     pub = db.Column(db.Boolean, default=False)
     channel_id = db.Column(db.Integer, db.ForeignKey("channels.id"))
-    schedule = db.relationship("ScheduleContent", backref="content", lazy="joined")
 
     def __repr__(self):
         return f"Content: {self.title}"
@@ -178,5 +178,8 @@ class ScheduleContent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     channel_id = db.Column(db.Integer, db.ForeignKey("channels.id"))
     content_id = db.Column(db.Integer, db.ForeignKey("channel_content.id"))
-    # content = db.relationship("ChannelContent", back_populates="schedule", lazy="joined")
+    content = db.relationship("ChannelContent",
+                              backref=backref("schedule", lazy="joined", uselist=False),
+                              lazy="joined",
+                              uselist=False)
     datetime_pub = db.Column(db.DateTime)

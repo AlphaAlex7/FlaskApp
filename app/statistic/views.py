@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import render_template, request, redirect, url_for
 from flask_login import current_user
 
@@ -8,8 +9,8 @@ from ..servises import get_channels_for_user, get_date_for_filter, \
     get_content_for_chanel, get_content_table_head, \
     get_content_table_body, get_option_sort_content, do_disable_forms, form_to_model, \
     get_regular_schedule, get_regular_schedule_table_body, get_regular_schedule_table_head, model_to_form, \
-    get_content_schedule, get_content_schedule_table_head, get_content_schedule_table_body, get_content_for_form_options
-from .forms import ContentDetailForm, RegularScheduleForm, ContentScheduleAddForm, ContentScheduleRemoveForm
+    get_content_schedule, get_content_schedule_table_head, get_content_schedule_table_body
+from .forms import ContentDetailForm, RegularScheduleForm, ContentScheduleAddForm, ContentScheduleDeleteForm
 from ..models import ChannelContent, ScheduleRegularType, ScheduleRegular, ScheduleContent
 
 
@@ -76,6 +77,8 @@ def content_detail():
     id_post = int(request.args.get("id_post", 0))
     id_channel = int(request.args.get("id_channel", 0))
     post = None
+    form_schedule = None
+    action_schedule_form = None
 
     if request.method == "GET":
         if id_post:
@@ -83,6 +86,20 @@ def content_detail():
             model_to_form(form, post)
             if post.pub:
                 do_disable_forms(form)
+            if post.schedule:
+                form_schedule = ContentScheduleDeleteForm()
+                form_schedule.datetime_pub.data = post.schedule.datetime_pub
+                form_schedule.id_schedule.data = post.schedule.id
+
+                action_schedule_form = url_for("statistic.schedule_delete") + f'?id_post={id_post}'
+                if url_for("statistic.content_schedule", id=id_channel) in request.referrer:
+                    action_schedule_form += f"&referer_schedule={True}"
+                    action_schedule_form += f"&id_channel={id_channel}"
+            else:
+                form_schedule = ContentScheduleAddForm()
+                action_schedule_form = url_for("statistic.schedule_add") + f'?id_post={id_post}'
+
+
         elif id_channel:
             form.channel_id.data = id_channel
 
@@ -90,7 +107,9 @@ def content_detail():
             "dashboard/content_detail.html",
             form=form,
             channels=get_channels_for_menu(channels),
-            post=post
+            post=post,
+            form_schedule=form_schedule,
+            action_schedule_form=action_schedule_form
         )
 
     else:
@@ -104,6 +123,39 @@ def content_detail():
             db.session.add(post)
             db.session.commit()
             return redirect(f'{url_for("statistic.content_detail")}?id_post={post.id}')
+
+
+@statistic.route("/content_detail/schedule_add", methods=["POST"])
+def schedule_add():
+    id_post = int(request.args.get("id_post", 0))
+    form = ContentScheduleAddForm()
+    if form.validate_on_submit():
+        if datetime.now() < form.datetime_pub.data:
+            content = ChannelContent.query.get(id_post)
+            new_schedule = ScheduleContent(
+                content_id=content.id,
+                channel_id=content.channel_id,
+                datetime_pub=form.datetime_pub.data
+            )
+            db.session.add(new_schedule)
+            db.session.commit()
+    return redirect(f'{url_for("statistic.content_detail")}?id_post={id_post}')
+
+
+@statistic.route("/content_detail/schedule_delete", methods=["POST"])
+def schedule_delete():
+    id_post = int(request.args.get("id_post", 0))
+    referer = request.args.get("referer_schedule")
+    id_channel = request.args.get("id_channel")
+    form = ContentScheduleDeleteForm()
+    if form.validate_on_submit():
+        db.session.delete(ScheduleContent.query.get(form.id_schedule.data))
+        db.session.commit()
+        if referer:
+            return redirect(
+                url_for("statistic.content_schedule", id=id_channel))
+
+    return redirect(f'{url_for("statistic.content_detail")}?id_post={id_post}')
 
 
 @statistic.route("/schedule/<int:id>", methods=["GET", "POST"])

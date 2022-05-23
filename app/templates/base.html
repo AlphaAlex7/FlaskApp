@@ -6,12 +6,7 @@
         <!-- Required meta tags -->
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-        {% block styles %}
-            <!-- Bootstrap CSS -->
-            {{ bootstrap.load_css() }}
-            <link href="{{ url_for('static', filename='c3/c3.css') }}" rel="stylesheet">
-            <link href="{{ url_for('static', filename='dashboard.css') }}" rel="stylesheet">
+        {% block head_meta %}
         {% endblock %}
         {% block scripts_head %}
             <!-- Load d3.js and c3.js -->
@@ -19,20 +14,26 @@
             <script src="{{ url_for('static', filename='c3/c3.min.js') }}"></script>
             <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
         {% endblock %}
+        {% block styles %}
+            <!-- Bootstrap CSS -->
+            {{ bootstrap.load_css() }}
+            <link href="{{ url_for('static', filename='c3/c3.css') }}" rel="stylesheet">
+            <link href="{{ url_for('static', filename='dashboard.css') }}" rel="stylesheet">
+        {% endblock %}
         <link rel="shortcut icon" href="{{ url_for('static', filename='/svg/chart-pie.svg') }}">
         <title>{% block title %}TG Controller{% endblock %}</title>
     {% endblock %}
 </head>
 <body>
 {#<div class="container">#}
-    {% include 'dashboard/header.html' %}
-    {% block body %}
+{% include 'dashboard/header.html' %}
+{% block body %}
 
-        {% block content %}
-            <div id="chart"></div>
-        {% endblock %}
-
+    {% block content %}
+        <div id="chart"></div>
     {% endblock %}
+
+{% endblock %}
 {#</div>#}
 {% block scripts %}
     <!-- Optional JavaScript -->

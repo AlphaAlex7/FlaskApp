@@ -119,7 +119,6 @@ def form_to_model(form, model):
     for field in form:
         if hasattr(model, field.name):
             model.__setattr__(field.name, form[field.name].data)
-            print(field.name, form[field.name].data)
     return model
 
 
@@ -127,7 +126,6 @@ def model_to_form(form, model):
     for field in form:
         if hasattr(model, field.name):
             form[field.name].data = model.__getattribute__(field.name)
-            print(field.name, form[field.name].data)
     return model
 
 
@@ -209,7 +207,7 @@ def get_regular_schedule_table_body(content):
 
 
 def get_content_schedule_table_body(content):
-    table_row = [{"id": element.id,
+    table_row = [{"id": element.content.id,
                   "time_pub": element.datetime_pub,
                   "content_type": element.content.title
                   }

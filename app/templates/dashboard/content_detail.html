@@ -1,6 +1,19 @@
 {% extends 'dashboard/main.html' %}
 {% from 'bootstrap5/form.html' import render_form %}
 
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
+{% endblock %}
+
+{% block scripts_head %}
+    {{ super() }}
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script src="{{ url_for('static', filename='js/date_pick.js') }}"></script>
+{% endblock %}
+
 {% block statistic %}
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h1 class="h2">Контент</h1>
@@ -10,6 +23,19 @@
             {{ render_form(form) }}
             {#        </div>#}
             {#        <div class="col-5 mx-auto">#}
+
+        </div>
+        {% if form_schedule %}
+            <div class="col-5 mx-2">
+                {{ render_form(form_schedule, action=action_schedule_form) }}
+                {#        </div>#}
+                {#        <div class="col-5 mx-auto">#}
+
+            </div>
+        {% endif %}
+    </div>
+    <div class="row">
+        <div class="col-5 mx-2">
             {% if post %}
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h5 class="h5">Дополнительная информация</h5>
