@@ -2,12 +2,41 @@ import datetime
 import re
 from typing import Union
 
-from flask import url_for
+from flask import url_for, flash
 from flask_sqlalchemy import BaseQuery, Pagination
-from sqlalchemy import asc, desc
+from sqlalchemy import desc
 
-from .models import ChannelStatistic, Channel, User, \
-    AnonymousUser, ChannelContent, ScheduleContent, ScheduleRegular, ScheduleRegularType
+from .. import db
+from ..models import ChannelStatistic, Channel, User, \
+    AnonymousUser, ChannelContent, ScheduleContent, ScheduleRegular
+from .form_helper import form_to_model
+from .enum_helpers import FlashType
+
+
+def rename_channel(id_channel, form):
+    channel = Channel.query.get(id_channel)
+
+    flash_message = f"Канал {channel.name} был переименован на {form.name.data}"
+
+    form_to_model(form, channel)
+    db.session.add(channel)
+    db.session.commit()
+    flash(flash_message, FlashType.SUCCESS.value)
+
+
+def create_channel(current_user, form):
+    channel = Channel()
+    if current_user == "AnonymousUser":
+        channel.author_id = User.query.filter_by(username="ieshua").first().id
+    else:
+        channel.author_id = current_user.id
+
+    form_to_model(form, channel)
+    db.session.add(channel)
+    sstatistic = ChannelStatistic(channel=channel, followers=0)
+    db.session.add(sstatistic)
+    db.session.commit()
+    flash(f"Канал, {channel.name}, добавлен.", FlashType.SUCCESS.value)
 
 
 def get_channels_for_user(current_user: Union[User, AnonymousUser], id: int = None) -> BaseQuery:
@@ -63,11 +92,16 @@ def add_average_subscribers_statistic_to_answer(answer: dict, channel: Channel) 
         new_stat.append(stat[i + 1].followers - e.followers)
 
     answer["colors"][channel.slug_name] = get_color_for_graf(channel.id)
-
-    answer["columns"].append([
-        channel.slug_name,
-        sum(new_stat) / len(new_stat)
-    ])
+    if len(new_stat):
+        answer["columns"].append([
+            channel.slug_name,
+            sum(new_stat) / len(new_stat)
+        ])
+    else:
+        answer["columns"].append([
+            channel.slug_name,
+            0
+        ])
 
 
 def add_average_content_views_statistic_to_answer(answer: dict, channel: Channel) -> None:
@@ -76,21 +110,34 @@ def add_average_content_views_statistic_to_answer(answer: dict, channel: Channel
         ChannelContent.pub == True).order_by(ChannelContent.date_pub)[-11:]
 
     answer["colors"][channel.slug_name] = get_color_for_graf(channel.id)
-    answer["columns"].append([
-        channel.slug_name,
-        sum((i.number_of_views for i in stat)) / len(stat)
-    ])
+    if len(stat):
+        answer["columns"].append([
+            channel.slug_name,
+            sum((i.number_of_views for i in stat)) / len(stat)
+        ])
+    else:
+        answer["columns"].append([
+            channel.slug_name,
+            0
+        ])
 
 
-def get_content_for_chanel(current_user, id: int, page: int, sorting: str) -> Pagination:
+def get_content_for_chanel(current_user, id: int, page: int, sorting: str, search: str) -> Pagination:
     channel = get_channels_for_user(current_user, id=id).first()
 
     content = ChannelContent.query \
-        .filter(ChannelContent.channel_id == channel.id) \
+        .filter(*content_searching(channel, search)) \
         .order_by(*content_sort_order(sorting)) \
         .paginate(page, 20, False)
 
     return content
+
+
+def content_searching(channel: Channel, search: str):
+    if search:
+        return ChannelContent.channel_id == channel.id, ChannelContent.title.like(f"%{search}%")
+    else:
+        return (ChannelContent.channel_id == channel.id,)
 
 
 def content_sort_order(sorting: str) -> tuple:
@@ -106,27 +153,6 @@ def content_sort_order(sorting: str) -> tuple:
             return (ChannelContent.title,)
         else:
             return (desc(ChannelContent.title),)
-
-
-def do_disable_forms(form):
-    """for post forms"""
-    for field in form:
-        form[field.name].render_kw = {'disabled': 'disabled'}
-        form[field.name].description = "Запись уже опубликована"
-
-
-def form_to_model(form, model):
-    for field in form:
-        if hasattr(model, field.name):
-            model.__setattr__(field.name, form[field.name].data)
-    return model
-
-
-def model_to_form(form, model):
-    for field in form:
-        if hasattr(model, field.name):
-            form[field.name].data = model.__getattribute__(field.name)
-    return model
 
 
 def get_regular_schedule(channel, page):
@@ -159,62 +185,6 @@ def get_option_sort_content(id):
     ]
 
 
-def get_content_table_head():
-    table_head = [
-        {'name': 'Заголовок', "id": "title"},
-        {'name': 'Дата создания', "id": "date_created"},
-        {'name': 'Дата публикации', "id": "date_pub"},
-        {'name': 'Просмотры', "id": "number_of_views"},
-        {'name': 'Опубликовано', "id": "pub"},
-    ]
-    return table_head
-
-
-def get_regular_schedule_table_head():
-    table_head = [
-        {'name': 'Время публикации', "id": "time_pub"},
-        {'name': 'Тип контента', "id": "content_type"}
-    ]
-    return table_head
-
-
-def get_content_schedule_table_head():
-    table_head = [
-        {'name': 'Дата публикации', "id": "datetime_pub"},
-        {'name': 'Пост', "id": "content_id"}
-    ]
-    return table_head
-
-
-def get_content_table_body(content):
-    table_row = [{"id": element.id,
-                  "title": element.title,
-                  "date_created": element.date_created,
-                  "date_pub": element.date_pub,
-                  "number_of_views": element.number_of_views,
-                  "pub": element.pub}
-                 for element in content]
-    return table_row
-
-
-def get_regular_schedule_table_body(content):
-    table_row = [{"id": element.id,
-                  "time_pub": element.time_pub,
-                  "content_type": element.content_type.name
-                  }
-                 for element in content]
-    return table_row
-
-
-def get_content_schedule_table_body(content):
-    table_row = [{"id": element.content.id,
-                  "time_pub": element.datetime_pub,
-                  "content_type": element.content.title
-                  }
-                 for element in content]
-    return table_row
-
-
 def get_channels_for_menu(channels):
     return [
         {"value": channel.id, "name": channel.name, "color": get_color_for_graf(channel.id)}
@@ -227,7 +197,3 @@ def get_date_for_filter():
         {"value": i, "name": "за " + str(i) + " дней"}
         for i in [20, 60, 90]
     ]
-
-
-def get_update_dict() -> dict:
-    return {"xs": {}, "columns": [], "colors": {}}

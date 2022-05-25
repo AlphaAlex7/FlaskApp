@@ -1,16 +1,11 @@
 from datetime import datetime
 from enum import Enum
 
+from .servises.enum_helpers import Permission, ScheduleRegularType
 from . import db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, AnonymousUserMixin
 from sqlalchemy.orm import backref
-
-
-class Permission:
-    SEE = 1
-    SEE_ALL = 2
-    ADMIN = 16
 
 
 class Role(db.Model):

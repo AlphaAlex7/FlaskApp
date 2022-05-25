@@ -1,8 +1,10 @@
 from flask import request
 from flask_login import current_user
-from . import statistic
-from ..servises import add_main_statistic_to_answer, get_update_dict, get_channels_for_user, \
+
+from ..servises.servises import get_channels_for_user, add_main_statistic_to_answer, \
     add_average_subscribers_statistic_to_answer, add_average_content_views_statistic_to_answer
+from . import statistic
+from ..servises.dict_helper import get_update_dict
 
 
 @statistic.route("/api_chart/channel-main-chart/", methods=["GET"])

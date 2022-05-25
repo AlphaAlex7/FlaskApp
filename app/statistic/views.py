@@ -1,17 +1,23 @@
 from datetime import datetime
-from flask import render_template, request, redirect, url_for
+
+from flask import render_template, request, redirect, url_for, flash
 from flask_login import current_user
 
 from . import statistic
 from .. import db
-from ..servises import get_channels_for_user, get_date_for_filter, \
+from ..servises.servises import get_channels_for_user, get_date_for_filter, \
     get_color_for_graf, get_channels_for_menu, \
-    get_content_for_chanel, get_content_table_head, \
-    get_content_table_body, get_option_sort_content, do_disable_forms, form_to_model, \
-    get_regular_schedule, get_regular_schedule_table_body, get_regular_schedule_table_head, model_to_form, \
-    get_content_schedule, get_content_schedule_table_head, get_content_schedule_table_body
-from .forms import ContentDetailForm, RegularScheduleForm, ContentScheduleAddForm, ContentScheduleDeleteForm
-from ..models import ChannelContent, ScheduleRegularType, ScheduleRegular, ScheduleContent
+    get_content_for_chanel, get_option_sort_content, get_regular_schedule, get_content_schedule, rename_channel, \
+    create_channel
+from ..servises.form_helper import do_disable_forms, form_to_model, model_to_form
+from ..servises.table_helper import get_content_table_head, get_regular_schedule_table_head, \
+    get_content_schedule_table_head, get_channel_table_head, get_content_table_body, get_regular_schedule_table_body, \
+    get_content_schedule_table_body, get_channel_table_body
+from ..servises.enum_helpers import ScheduleRegularType, FlashType
+from .forms import ContentDetailForm, RegularScheduleForm, \
+    ContentScheduleAddForm, ContentScheduleDeleteForm, \
+    NewChannelForm, RenameChannelForm, SearchContentForm
+from ..models import ChannelContent, ScheduleRegular, ScheduleContent
 
 
 @statistic.route("/")

@@ -3,7 +3,7 @@ from flask import render_template, request
 from flask_login import current_user
 from . import api
 from ..models import Channel
-from ..servises import get_channels_for_user
+from ..servises.servises import get_channels_for_user
 
 
 @api.route("/statistic/channels_droplist/", methods=["GET"])

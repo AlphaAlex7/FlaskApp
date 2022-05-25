@@ -4,7 +4,8 @@ from sqlalchemy.sql.expression import func
 
 from .models import db, User, Role, \
     Channel, ChannelStatistic, ChannelContent, \
-    ScheduleContent, ScheduleRegular, ScheduleRegularType
+    ScheduleContent, ScheduleRegular
+from .servises.enum_helpers import ScheduleRegularType
 import string
 import random
 

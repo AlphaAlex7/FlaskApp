@@ -1,7 +1,8 @@
 from flask_migrate import Migrate, upgrade
 
 from app import create_app, db
-from app.models import User, Role, ChannelStatistic, ChannelContent, Channel, ScheduleContent, ScheduleRegular, ScheduleRegularType
+from app.models import User, Role, ChannelStatistic, ChannelContent, Channel, ScheduleContent, ScheduleRegular
+from app.servises.enum_helpers import ScheduleRegularType
 from app.init_db_data import create_test_data
 from app.celery_app import make_celery
 
