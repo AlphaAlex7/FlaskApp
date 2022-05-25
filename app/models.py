@@ -1,5 +1,4 @@
 from datetime import datetime
-from enum import Enum
 
 from .servises.enum_helpers import Permission, ScheduleRegularType
 from . import db, login_manager
@@ -150,12 +149,6 @@ class ChannelContent(db.Model):
 
     def __repr__(self):
         return f"Content: {self.title}"
-
-
-class ScheduleRegularType(Enum):
-    NEW = 0
-    OLD = 1
-    RANDOM = 2
 
 
 class ScheduleRegular(db.Model):
