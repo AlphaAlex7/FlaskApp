@@ -18,7 +18,6 @@ function getFormOptions(id_schedule_regular=0) {
 
 $(document).ready(function($) {
     $(".table-row").click(function() {
-        console.log($(this).data("value"));
         window.document.location = $(this).data("href");
     });
 });
