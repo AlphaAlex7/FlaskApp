@@ -1,12 +1,14 @@
 {% extends 'base.html' %}
+{% from "macros/flash_msg.html" import flash_msg %}
 {% block content %}
     <div class="container-fluid">
         <div class="row">
             {% include 'dashboard/navbar_dashbord.html' %}
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                {{ flash_msg() }}
                 {% block statistic %}
                     <div class="text-center m-5">
-                        <a>Когда-нибудь я доделаю, Обещаю {{'active' if
+                        <a>Когда-нибудь я доделаю, Обещаю {{ 'active' if
                      request.path == url_for("statistic.schedule", id=2) }}</a>
                     </div>
                 {% endblock %}

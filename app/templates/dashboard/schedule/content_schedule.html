@@ -1,8 +1,7 @@
-{% extends 'dashboard/schedule.html' %}
+{% extends 'dashboard/schedule/schedule.html' %}
 {% from 'macros/droplist.html' import droplist_options %}
 {% from 'macros/macrosDrop.html' import droplist_whitout_js %}
 {% from'macros/pagination.html' import pagination_bootstrap %}
-
 {% block statistic_table %}
     <div class="row" id="regular">
         <div class="col-md-5">
@@ -17,8 +16,8 @@
                     </thead>
                     <tbody id="table_body">
                     {% for tr in table_row %}
-                        <tr class="table-row" data-value="{{ tr.id }}">
-                            <td>{{ tr.time_pub.strftime('%H:%M') }}</td>
+                        <tr class="table-row"  data-href="{{  url_for('statistic.content_detail') }}?id_post={{tr.id}}&id_channel={{ id }}" >
+                            <td>{{ tr.time_pub.strftime('%d.%m.%Y %H:%M') }}</td>
                             <td>
                                 {{ tr.content_type }}
                             </td>
@@ -33,11 +32,13 @@
 
             {{ pagination_bootstrap(url=url_for('statistic.schedule', id=id), pagination=pagination) }}
         </div>
-        <div class="col-5 mx-4" id="form_regular">
+        <div class="col-5 mx-4">
+            <a class="btn btn-outline-primary" href="{{ url_for('statistic.content', id=id) }}">Добавить пост</a>
         </div>
     </div>
 {% endblock %}
+
 {% block scripts %}
     {{ super() }}
-    <script src="{{ url_for('static', filename='js/schedule.js') }}" id_channel="{{ id }}"></script>
+        <script src="{{ url_for('static', filename='js/scheduleContent.js') }}" id_channel="{{ id }}"></script>
 {% endblock %}

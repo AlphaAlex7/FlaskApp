@@ -33,45 +33,92 @@ def subscribe():
         {"value": channel.id, "name": channel.name, "color": get_color_for_graf(channel.id)}
         for channel in channels
     ]
-
     option_date = get_date_for_filter()
-
+    table_head = get_channel_table_head()
+    table_row = get_channel_table_body(channels)
     return render_template(
-        "dashboard/statistic_subscribe.html",
-        path_url="subscribe",
+        "dashboard/channel/statistic_subscribe.html",
         option_channel=option_channel,
         option_date=option_date,
         channels=get_channels_for_menu(channels),
+        table_head=table_head,
+        table_row=table_row,
     )
+
+
+@statistic.route("/channel_detail/", methods=["GET", "POST"])
+def channel_detail():
+    id_channel = int(request.args.get("id_channel", 0))
+    if id_channel:
+        form = RenameChannelForm()
+    else:
+        form = NewChannelForm()
+    channels = get_channels_for_user(current_user)
+
+    if request.method == "GET":
+        if id_channel:
+            try:
+                current_channel = list(filter(lambda x: x.id == id_channel, channels))[0]
+                model_to_form(form, current_channel)
+            except IndexError:
+                return render_template('404.html', error_message="А конкретно этого канала"), 404
+        return render_template(
+            "dashboard/channel/channel_detail.html",
+            channels=get_channels_for_menu(channels),
+            form=form
+        )
+    elif request.method == "POST":
+        if form.validate_on_submit():
+            if id_channel:
+                rename_channel(id_channel, form)
+            else:
+                create_channel(current_user, form)
+            return redirect(url_for("statistic.subscribe"))
+        return render_template(
+            "dashboard/channel/channel_detail.html",
+            channels=get_channels_for_menu(channels),
+            form=form
+        )
 
 
 @statistic.route("/content/<int:id>/")
 def content(id):
     sorting = request.args.get("sorting", "title_asc")
     page = int(request.args.get("page", 1))
+    search = request.args.get("search")
 
     channels = get_channels_for_user(current_user)
     table_head = get_content_table_head()
+    form_search = SearchContentForm()
+
+    if form_search.validate_on_submit():
+        search = form_search.search.data
+
+    if search:
+        form_search.search.data = search
 
     content_pagination = get_content_for_chanel(
         current_user=current_user,
         id=id,
         page=page,
-        sorting=sorting
+        sorting=sorting,
+        search=search
     )
 
     table_row = get_content_table_body(content_pagination.items)
     option_sort = get_option_sort_content(id=id)
 
     return render_template(
-        "dashboard/content_page.html",
+        "dashboard/content/content_page.html",
         channels=get_channels_for_menu(channels),
         id=id,
         table_head=table_head,
         table_row=table_row,
         pagination=content_pagination,
         sorting="&sorting=" + sorting,
-        option_sort=option_sort
+        option_sort=option_sort,
+        form_search=form_search,
+        searching=f"&search={search}" if search else ""
     )
 
 
@@ -110,7 +157,7 @@ def content_detail():
             form.channel_id.data = id_channel
 
         return render_template(
-            "dashboard/content_detail.html",
+            "dashboard/content/content_detail.html",
             form=form,
             channels=get_channels_for_menu(channels),
             post=post,
@@ -179,7 +226,7 @@ def schedule(id):
     table_row = get_regular_schedule_table_body(regular_schedule_pagination.items)
 
     return render_template(
-        "dashboard/regular_schedule.html",
+        "dashboard/schedule/regular_schedule.html",
         channels=get_channels_for_menu(channels),
         id=id,
         table_head=table_head,
@@ -205,7 +252,7 @@ def schedule_regular_form(id_channel):
         else:
             form_regular_schedule.delete.render_kw = {"hidden": ""}
         return render_template(
-            "form.html",
+            "dashboard/api_templates/form.html",
             form=form_regular_schedule,
             action=action)
     else:
@@ -246,7 +293,7 @@ def content_schedule(id):
     table_row = get_content_schedule_table_body(content_schedule_pagination.items)
 
     return render_template(
-        "dashboard/content_schedule.html",
+        "dashboard/schedule/content_schedule.html",
         channels=get_channels_for_menu(channels),
         id=id,
         table_head=table_head,

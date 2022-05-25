@@ -1,19 +1,36 @@
 {% extends 'dashboard/main.html' %}
-{% from 'macros/droplist.html' import droplist_options %}
 {% from 'macros/macrosDrop.html' import droplist_whitout_js %}
 {% from 'macros/pagination.html' import pagination_bootstrap %}
+{% from 'bootstrap4/form.html' import render_field %}
+
+
 {% block statistic %}
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Контент</h1>
+        <h1 class="h2 me-3">Контент</h1>
         <div class="btn-toolbar mb-2 mb-md-0">
             <div class="btn-group me-2">
-                {{ droplist_whitout_js(button_title="Сортировать", options=option_sort) }}
 
+                <form class="input-group" method="get">
 
+                    {% if form_search.search.data %}
+                        <a class="btn btn-outline-danger border-0" href="{{ url_for('statistic.content', id=id) }}">
+                            <img src="{{ url_for('static', filename="svg/cross-circle.svg") }}"
+                                width="24" height="26" role="img" title="" alt="">
+                        </a>
+                {% endif %}
+                    {{ form_search.csrf_token() }}
+                    {{ form_search.search }}
+                    {{ render_field(form_search.submit) }}
+                </form>
             </div>
-            <div class="btn-toolbar mb-2 mb-md-0">
-                <a href="{{ url_for('statistic.content_detail') }}?id_channel={{ id }}"
-                   class="btn btn-secondary">Добавить пост</a>
+            <div class="btn-group me-2 ">
+                {{ droplist_whitout_js(button_title="Сортировать", options=option_sort) }}
+            </div>
+            <div class="btn-group">
+                <div>
+                    <a href="{{ url_for('statistic.content_detail') }}?id_channel={{ id }}"
+                       class="btn btn-secondary btn-md">Добавить пост</a>
+                </div>
             </div>
         </div>
     </div>
@@ -54,9 +71,6 @@
                                   style="width: 1.25em; height: 1.25em;background-color: rgba(0, 0, 0, 0.4)"></span>
                         {% endif %}
                     </td>
-                    {#        {% for row in tr.value %}#}
-                    {#            <td>{{ row }}</td>#}
-                    {#        {% endfor %}#}
 
                 </tr>
             {% endfor %}
@@ -64,7 +78,7 @@
         </table>
     </div>
 
-    {{ pagination_bootstrap(url=url_for('statistic.content', id=id), pagination=pagination, url_attr=sorting ) }}
+    {{ pagination_bootstrap(url=url_for('statistic.content', id=id), pagination=pagination, url_attr=sorting+searching ) }}
 {% endblock %}
 
 {% block scripts %}

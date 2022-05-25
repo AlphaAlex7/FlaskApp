@@ -1,0 +1,12 @@
+{% extends 'dashboard/main.html' %}
+{% from 'bootstrap5/form.html' import render_form %}
+{% block statistic %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Канал</h1>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            {{ render_form(form) }}
+        </div>
+    </div>
+{% endblock %}

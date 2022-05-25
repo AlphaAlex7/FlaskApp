@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% from 'bootstrap5/form.html' import render_form %}
+
+{% block content %}
+    <div class="row ">
+        <div class="mx-auto col-lg-6 pt-2 pb-5 align-items-center text-center">
+            <h1 class="h2 m-4">404. Чего-то нет</h1>
+            {% if error_message %}
+                <h1 class="h4 m-4">{{ error_message }}</h1>
+            {% else %}
+                <h1 class="h4 m-4">А конкретно этой страницы</h1>
+            {% endif %}
+            <a class="btn btn-outline-danger" href="{{ url_for('statistic.start') }}">Давай домой</a>
+
+        </div>
+    </div>
+{% endblock %}

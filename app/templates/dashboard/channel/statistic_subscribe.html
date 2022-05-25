@@ -1,0 +1,72 @@
+{% extends 'dashboard/main.html' %}
+{% from 'macros/droplist.html' import droplist_options %}
+{% from 'macros/macrosDrop.html' import droplist %}
+{% block statistic %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Статистика</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group me-2">
+                {{ droplist(button_title="Каналы", title='Все каналы', options=option_channel, onchange="selectChange(event)") }}
+                {{ droplist(button_title="По времени", options=option_date, onchange="selectChangeDate(event)") }}
+            </div>
+        </div>
+    </div>
+    <div class="m-4 rounded text-center p-2 border shadow-sm ">
+        <div id="chart"></div>
+    </div>
+
+    <div class="row mb-4 border-bottom">
+        {% for i in [
+            {'name':'Средний прирост подписчиков','info':'за последние 10 дней' ,'chart':'chart_2'},
+            {'name':'Среднее количество просмотров','info':'за последние 10 записей' ,'chart':'chart_3'},
+            ] %}
+            <div class="col-lg-5 mx-auto rounded text-center p-2 border shadow-sm mb-3">
+                <H5>{{ i.name }}</H5>
+                <p class="text-black-50">{{ i.info }}</p>
+                <div class="me-4" id="{{ i.chart }}"></div>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h3">Каналы</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group me-2">
+                <a href="{{ url_for('statistic.channel_detail') }}"
+                   class="btn btn-secondary">Добавить канал</a>
+            </div>
+        </div>
+    </div>
+    <div>
+        <table class="table table-hover " id="table">
+            <thead class="table-secondary" id="table_head">
+            <tr>
+                {% for th in table_head %}
+                    <th scope="col">{{ th.name }}</th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody id="table_body">
+            {% for tr in table_row %}
+                <tr class="table-row" data-href="{{ url_for('statistic.channel_detail') }}?id_channel={{ tr.id }}">
+                    <td>{{ tr.name }}</td>
+                    <td>{{ tr.slug_name }}</td>
+                    <td>
+                        {% if tr.pub %}
+                            {{ tr.channel_id }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='js/chartList.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/statistic.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/table.js') }}"></script>
+{% endblock %}
