@@ -1,21 +1,17 @@
 {% from 'bootstrap5/form.html' import render_form %}
-{#<!doctype html>#}
 <html lang="ru">
 <head>
     {% block head %}
-        <!-- Required meta tags -->
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         {% block head_meta %}
         {% endblock %}
         {% block scripts_head %}
-            <!-- Load d3.js and c3.js -->
             <script src="https://d3js.org/d3.v5.min.js"></script>
             <script src="{{ url_for('static', filename='c3/c3.min.js') }}"></script>
             <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
         {% endblock %}
         {% block styles %}
-            <!-- Bootstrap CSS -->
             {{ bootstrap.load_css() }}
             <link href="{{ url_for('static', filename='c3/c3.css') }}" rel="stylesheet">
             <link href="{{ url_for('static', filename='dashboard.css') }}" rel="stylesheet">
@@ -25,7 +21,6 @@
     {% endblock %}
 </head>
 <body>
-{#<div class="container">#}
 {% include 'dashboard/header.html' %}
 {% block body %}
 
@@ -34,9 +29,7 @@
     {% endblock %}
 
 {% endblock %}
-{#</div>#}
 {% block scripts %}
-    <!-- Optional JavaScript -->
     {{ bootstrap.load_js() }}
 {% endblock %}
 </body>
