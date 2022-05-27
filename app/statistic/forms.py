@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask_pagedown.fields import PageDownField
 from wtforms import StringField, SubmitField, TextAreaField, SelectField, TimeField, DateTimeField, IntegerField, \
     HiddenField
 from wtforms.validators import DataRequired, Length, ValidationError
@@ -28,10 +29,10 @@ class RenameChannelForm(FlaskForm):
 
 class ContentDetailForm(FlaskForm):
     title = StringField("Заголовок", validators=[DataRequired(), Length(1, 128)])
-    text_content = TextAreaField(
+    text_content = PageDownField(
         "Сообщение",
         validators=[DataRequired()],
-        render_kw={"style": "height: 15rem"}
+        render_kw={"style": "height: 15rem", "class": "form-control"}
     )
     channel_id = SelectField("Канал", validate_choice=False, coerce=int)
     submit = SubmitField("Сохранить")

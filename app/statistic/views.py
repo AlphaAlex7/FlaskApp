@@ -145,9 +145,11 @@ def content_detail():
                 form_schedule.id_schedule.data = post.schedule.id
 
                 action_schedule_form = url_for("statistic.schedule_delete") + f'?id_post={id_post}'
-                if url_for("statistic.content_schedule", id=id_channel) in request.referrer:
-                    action_schedule_form += f"&referer_schedule={True}"
-                    action_schedule_form += f"&id_channel={id_channel}"
+
+                if request.referrer:
+                    if url_for("statistic.content_schedule", id=id_channel) in request.referrer:
+                        action_schedule_form += f"&referer_schedule={True}"
+                        action_schedule_form += f"&id_channel={id_channel}"
             else:
                 form_schedule = ContentScheduleAddForm()
                 action_schedule_form = url_for("statistic.schedule_add") + f'?id_post={id_post}'
@@ -155,7 +157,6 @@ def content_detail():
 
         elif id_channel:
             form.channel_id.data = id_channel
-
         return render_template(
             "dashboard/content/content_detail.html",
             form=form,

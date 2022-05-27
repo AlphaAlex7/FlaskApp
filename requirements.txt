@@ -5,6 +5,7 @@ Flask-Script==2.0.5
 Flask-SQLAlchemy
 Flask-WTF
 Flask-Login
+Flask-PageDown==0.4.0
 SQLAlchemy
 WTForms
 Werkzeug

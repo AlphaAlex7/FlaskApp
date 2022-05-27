@@ -4,9 +4,12 @@ from flask import Flask
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap5
+from flask_pagedown import PageDown
 from .config import LocalConfig, DockerConfig
+
 bootstrap = Bootstrap5()
 db = SQLAlchemy()
+page_down = PageDown()
 
 login_manager = LoginManager()
 login_manager.session_protection = None
@@ -30,6 +33,7 @@ def create_app():
     bootstrap.init_app(main_app)
     db.init_app(main_app)
     login_manager.init_app(main_app)
+    page_down.init_app(main_app)
 
     from .api import api
     main_app.register_blueprint(api, url_prefix="/api/")
