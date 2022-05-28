@@ -29,7 +29,7 @@ class RenameChannelForm(FlaskForm):
 
 class ContentDetailForm(FlaskForm):
     title = StringField("Заголовок", validators=[DataRequired(), Length(1, 128)])
-    text_content = PageDownField(
+    text_content = TextAreaField(
         "Сообщение",
         validators=[DataRequired()],
         render_kw={"style": "height: 15rem", "class": "form-control"}

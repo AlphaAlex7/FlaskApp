@@ -102,15 +102,22 @@ body {
 .table-row {
     cursor: pointer;
 }
+#pagedown-preview-background{
 
-.flask-pagedown-preview {
+    background-color: #0F0F0F;
+background-image: url("img/pattern-2.svg");
+    background-size: 207px 450px;
+    border-radius: 0.75rem;
+}
+#pagedown-preview {
     margin-top: 0.75rem;
     margin-bottom: 0.75rem;
     padding: .3125rem .5rem .375rem;
-    background: rgba(0, 0, 0, .75);
+    background: rgba(33,33,33);
     border-radius: 0.75rem;
-  color: white;
-
+    color: white;
+--font-family: "Roboto", -apple-system, BlinkMacSystemFont, "Apple Color Emoji", "Segoe UI", Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    --font-family-monospace: "Cascadia Mono", "Roboto Mono", "Menlo", "Courier", "Courier New", monospace;
     /*border-top-right-radius: var(--border-top-right-radius);*/
     /*border-bottom-left-radius: var(--border-bottom-left-radius);*/
     /*border-bottom-right-radius: var(--border-bottom-right-radius);*/
