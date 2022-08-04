@@ -14,7 +14,7 @@ celery = make_celery(app)
 @app.shell_context_processor
 def make_shell_context():
     return dict(
-        db=db,
+        create_app=create_app,
         User=User,
         Role=Role,
         ChannelStatistic=ChannelStatistic,

@@ -5,7 +5,7 @@ from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap5
 from flask_pagedown import PageDown
-from .config import LocalConfig, DockerConfig
+from .config import LocalConfig, DockerConfig, TestingConfig
 
 bootstrap = Bootstrap5()
 db = SQLAlchemy()
@@ -16,12 +16,16 @@ login_manager.session_protection = None
 login_manager.login_view = 'auth.login'
 
 
-def create_app():
+def create_app(config=None):
     main_app = Flask(__name__)
+
     if os.environ.get("DOCKER"):
         main_app.config.from_object(DockerConfig)
+    elif config == "test":
+        main_app.config.from_object(TestingConfig)
     else:
         main_app.config.from_object(LocalConfig)
+
     # basedir = os.path.abspath(os.path.dirname(__file__))
     #
     # main_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'data.sqlite')

@@ -21,7 +21,8 @@ class Role(db.Model):
         roles = {
             'User': [Permission.SEE],
             'Moderator': [Permission.SEE, Permission.SEE_ALL],
-            'Administrator': [Permission.SEE, Permission.SEE_ALL, Permission.ADMIN],
+            'Administrator': [Permission.SEE, Permission.SEE_ALL,
+                              Permission.ADMIN],
         }
         default_role = 'User'
         for r in roles:
@@ -109,9 +110,12 @@ class Channel(db.Model):
     name = db.Column(db.String(128))
     slug_name = db.Column(db.String(128), unique=True, index=True)
     author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-    statistics = db.relationship("ChannelStatistic", backref="channel", lazy="dynamic")
-    content = db.relationship("ChannelContent", backref="channel", lazy="dynamic")
-    schedule_regular = db.relationship("ScheduleRegular", backref="channel", lazy="dynamic")
+    statistics = db.relationship("ChannelStatistic", backref="channel",
+                                 lazy="dynamic")
+    content = db.relationship("ChannelContent", backref="channel",
+                              lazy="dynamic")
+    schedule_regular = db.relationship("ScheduleRegular", backref="channel",
+                                       lazy="dynamic")
 
     def __repr__(self):
         return f"Chanel: {self.slug_name}"
@@ -156,8 +160,12 @@ class ScheduleRegular(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     channel_id = db.Column(db.Integer, db.ForeignKey("channels.id"))
-    content_type = db.Column(db.Enum(ScheduleRegularType), default=ScheduleRegularType.NEW)
+    content_type = db.Column(db.Enum(ScheduleRegularType),
+                             default=ScheduleRegularType.NEW)
     time_pub = db.Column(db.TIME)
+
+    def __repr__(self):
+        return f"<ScheduleRegular {self.id}, {self.time_pub}, {self.channel_id}>"
 
 
 class ScheduleContent(db.Model):
@@ -167,7 +175,11 @@ class ScheduleContent(db.Model):
     channel_id = db.Column(db.Integer, db.ForeignKey("channels.id"))
     content_id = db.Column(db.Integer, db.ForeignKey("channel_content.id"))
     content = db.relationship("ChannelContent",
-                              backref=backref("schedule", lazy="joined", uselist=False),
+                              backref=backref("schedule", lazy="joined",
+                                              uselist=False),
                               lazy="joined",
                               uselist=False)
     datetime_pub = db.Column(db.DateTime)
+
+    def __repr__(self):
+        return f"<ScheduleContent {self.id}, {self.datetime_pub}, {self.channel_id}>"

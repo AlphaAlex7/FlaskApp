@@ -20,6 +20,13 @@ class LocalConfig(Config):
     result_backend = 'redis://redis:6379/0'
 
 
+class TestingConfig(LocalConfig):
+    TESTING = True
+    SERVER_NAME = "127.0.0.0.1:5000"
+    SQLALCHEMY_COMMIT_ON_TEARDOWN = False
+    SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.path.join(basedir, 'test_data.sqlite')}"
+
+
 class DockerConfig(LocalConfig):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = ''.join(
