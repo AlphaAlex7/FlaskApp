@@ -179,7 +179,8 @@ class ScheduleContent(db.Model):
                                               uselist=False),
                               lazy="joined",
                               uselist=False)
-    datetime_pub = db.Column(db.DateTime)
+    date_pub = db.Column(db.Date)
+    time_pub = db.Column(db.Time)
 
     def __repr__(self):
-        return f"<ScheduleContent {self.id}, {self.datetime_pub}, {self.channel_id}>"
+        return f"<ScheduleContent {self.id}, {self.time_pub}, {self.date_pub}, {self.channel_id}>"

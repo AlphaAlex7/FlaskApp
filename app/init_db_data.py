@@ -138,7 +138,8 @@ def schedule_content_generator():
             yield ScheduleContent(
                 channel_id=i.channel_id,
                 content_id=i.id,
-                datetime_pub=date,
+                time_pub=date.time(),
+                date_pub=date.date(),
             )
 
 
@@ -203,11 +204,12 @@ def test_schedule_content_generator():
         for index, item in enumerate(content):
             if index == 2 and channel.id==2:
                 continue
-            date = date_start + datetime.timedelta(hours=index * 2)
+            date_time = date_start + datetime.timedelta(hours=index * 2)
             yield ScheduleContent(
                 channel_id=item.channel_id,
                 content_id=item.id,
-                datetime_pub=date,
+                time_pub=date_time.time(),
+                date_pub=date_time.date(),
             )
 
 

@@ -35,8 +35,13 @@ class FlaskClientTestCase(unittest.TestCase):
                 with freezegun.freeze_time(
                         f"{datetime.date.today().isoformat()} {t}"
                 ):
+                    print(datetime.date.today())
+                    print(date_interval())
+                    print()
                     print(get_schedule_regular(hour=2))
+                    print()
                     print(get_irregular(hour=2))
+                    print()
                     print(content_to_pub(2))
                     print()
 
