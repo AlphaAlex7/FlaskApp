@@ -1,7 +1,11 @@
 from flask_wtf import FlaskForm
 from flask_pagedown.fields import PageDownField
-from wtforms import StringField, SubmitField, TextAreaField, SelectField, TimeField, DateTimeField, IntegerField, \
-    HiddenField
+from wtforms import(
+    StringField, SubmitField,
+    TextAreaField, SelectField,
+    TimeField, DateTimeField,
+    IntegerField, HiddenField
+)
 from wtforms.validators import DataRequired, Length, ValidationError
 from ..models import Channel
 

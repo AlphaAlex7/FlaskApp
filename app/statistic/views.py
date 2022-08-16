@@ -5,18 +5,27 @@ from flask_login import current_user
 
 from . import statistic
 from .. import db
-from ..servises.servises import get_channels_for_user, get_date_for_filter, \
-    get_color_for_graf, get_channels_for_menu, \
-    get_content_for_chanel, get_option_sort_content, get_regular_schedule, get_content_schedule, rename_channel, \
-    create_channel
-from ..servises.form_helper import do_disable_forms, form_to_model, model_to_form
-from ..servises.table_helper import get_content_table_head, get_regular_schedule_table_head, \
-    get_content_schedule_table_head, get_channel_table_head, get_content_table_body, get_regular_schedule_table_body, \
-    get_content_schedule_table_body, get_channel_table_body
+from ..servises.servises import (
+    get_channels_for_user, get_date_for_filter,
+    get_color_for_graf, get_channels_for_menu,
+    get_content_for_chanel, get_option_sort_content,
+    get_regular_schedule, get_content_schedule,
+    rename_channel, create_channel
+)
+from ..servises.form_helper import (
+    do_disable_forms, form_to_model,
+    model_to_form
+)
+from ..servises.table_helper import (
+    get_content_table, get_content_schedule_table,
+    get_regular_schedule_table, get_channel_table
+)
 from ..servises.enum_helpers import ScheduleRegularType, FlashType
-from .forms import ContentDetailForm, RegularScheduleForm, \
-    ContentScheduleAddForm, ContentScheduleDeleteForm, \
+from .forms import (
+    ContentDetailForm, RegularScheduleForm,
+    ContentScheduleAddForm, ContentScheduleDeleteForm,
     NewChannelForm, RenameChannelForm, SearchContentForm
+)
 from ..models import ChannelContent, ScheduleRegular, ScheduleContent
 
 
@@ -30,12 +39,14 @@ def subscribe():
     channels = get_channels_for_user(current_user)
 
     option_channel = [
-        {"value": channel.id, "name": channel.name, "color": get_color_for_graf(channel.id)}
+        {"value": channel.id, "name": channel.name,
+         "color": get_color_for_graf(channel.id)}
         for channel in channels
     ]
+
     option_date = get_date_for_filter()
-    table_head = get_channel_table_head()
-    table_row = get_channel_table_body(channels)
+    table_head, table_row = get_channel_table(channels)
+
     return render_template(
         "dashboard/channel/statistic_subscribe.html",
         option_channel=option_channel,
@@ -58,10 +69,14 @@ def channel_detail():
     if request.method == "GET":
         if id_channel:
             try:
-                current_channel = list(filter(lambda x: x.id == id_channel, channels))[0]
+                current_channel = \
+                    list(filter(lambda x: x.id == id_channel, channels))[0]
                 model_to_form(form, current_channel)
             except IndexError:
-                return render_template('404.html', error_message="А конкретно этого канала"), 404
+                return render_template(
+                    '404.html',
+                    error_message="А конкретно этого канала"
+                ), 404
         return render_template(
             "dashboard/channel/channel_detail.html",
             channels=get_channels_for_menu(channels),
@@ -88,7 +103,6 @@ def content(id):
     search = request.args.get("search")
 
     channels = get_channels_for_user(current_user)
-    table_head = get_content_table_head()
     form_search = SearchContentForm()
 
     if form_search.validate_on_submit():
@@ -105,7 +119,7 @@ def content(id):
         search=search
     )
 
-    table_row = get_content_table_body(content_pagination.items)
+    table_head, table_row = get_content_table(content_pagination.items)
     option_sort = get_option_sort_content(id=id)
 
     return render_template(
@@ -147,15 +161,18 @@ def content_detail():
                 )
                 form_schedule.id_schedule.data = post.schedule.id
 
-                action_schedule_form = url_for("statistic.schedule_delete") + f'?id_post={id_post}'
+                action_schedule_form = url_for(
+                    "statistic.schedule_delete") + f'?id_post={id_post}'
 
                 if request.referrer:
-                    if url_for("statistic.content_schedule", id=id_channel) in request.referrer:
+                    if url_for("statistic.content_schedule",
+                               id=id_channel) in request.referrer:
                         action_schedule_form += f"&referer_schedule={True}"
                         action_schedule_form += f"&id_channel={id_channel}"
             else:
                 form_schedule = ContentScheduleAddForm()
-                action_schedule_form = url_for("statistic.schedule_add") + f'?id_post={id_post}'
+                action_schedule_form = url_for(
+                    "statistic.schedule_add") + f'?id_post={id_post}'
 
 
         elif id_channel:
@@ -179,7 +196,8 @@ def content_detail():
             form_to_model(form, post)
             db.session.add(post)
             db.session.commit()
-            return redirect(f'{url_for("statistic.content_detail")}?id_post={post.id}')
+            return redirect(
+                f'{url_for("statistic.content_detail")}?id_post={post.id}')
 
 
 @statistic.route("/content_detail/schedule_add", methods=["POST"])
@@ -226,9 +244,11 @@ def schedule(id):
     except StopIteration:
         current_channel = None
 
-    regular_schedule_pagination = get_regular_schedule(current_channel, page=page)
-    table_head = get_regular_schedule_table_head()
-    table_row = get_regular_schedule_table_body(regular_schedule_pagination.items)
+    regular_schedule_pagination = get_regular_schedule(current_channel,
+                                                       page=page)
+    table_head, table_row = get_regular_schedule_table(
+        regular_schedule_pagination.items
+    )
 
     return render_template(
         "dashboard/schedule/regular_schedule.html",
@@ -240,14 +260,17 @@ def schedule(id):
     )
 
 
-@statistic.route("/schedule_regular_form/<int:id_channel>/", methods=["GET", "POST"])
+@statistic.route("/schedule_regular_form/<int:id_channel>/",
+                 methods=["GET", "POST"])
 def schedule_regular_form(id_channel):
     id_schedule = int(request.args.get("id_schedule_regular", 0))
     form_regular_schedule = RegularScheduleForm()
-    form_regular_schedule.content_type.choices = [(i.name, i.name) for i in ScheduleRegularType]
+    form_regular_schedule.content_type.choices = [(i.name, i.name) for i in
+                                                  ScheduleRegularType]
 
     if request.method == "GET":
-        action = url_for("statistic.schedule_regular_form", id_channel=id_channel)
+        action = url_for("statistic.schedule_regular_form",
+                         id_channel=id_channel)
         if id_schedule:
             regular_schedule = ScheduleRegular.query.get(id_schedule)
 
@@ -292,10 +315,13 @@ def content_schedule(id):
     except StopIteration:
         current_channel = None
 
-    content_schedule_pagination = get_content_schedule(current_channel, page=page)
-    print(content_schedule_pagination.items[0].__dict__)
-    table_head = get_content_schedule_table_head()
-    table_row = get_content_schedule_table_body(content_schedule_pagination.items)
+    content_schedule_pagination = get_content_schedule(
+        current_channel, page=page
+    )
+
+    table_head, table_row = get_content_schedule_table(
+        content_schedule_pagination.items
+    )
 
     return render_template(
         "dashboard/schedule/content_schedule.html",

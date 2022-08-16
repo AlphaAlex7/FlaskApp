@@ -7,8 +7,12 @@ from flask_sqlalchemy import BaseQuery, Pagination
 from sqlalchemy import desc
 
 from .. import db
-from ..models import ChannelStatistic, Channel, User, \
-    AnonymousUser, ChannelContent, ScheduleContent, ScheduleRegular
+from ..models import(
+    ChannelStatistic, Channel,
+    User, AnonymousUser,
+    ChannelContent, ScheduleContent,
+    ScheduleRegular
+)
 from .form_helper import form_to_model
 from .enum_helpers import FlashType
 
