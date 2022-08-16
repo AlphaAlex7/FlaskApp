@@ -141,7 +141,10 @@ def content_detail():
                 do_disable_forms(form)
             if post.schedule:
                 form_schedule = ContentScheduleDeleteForm()
-                form_schedule.datetime_pub.data = post.schedule.datetime_pub
+                form_schedule.datetime_pub.data = datetime.combine(
+                    post.schedule.date_pub,
+                    post.schedule.time_pub
+                )
                 form_schedule.id_schedule.data = post.schedule.id
 
                 action_schedule_form = url_for("statistic.schedule_delete") + f'?id_post={id_post}'
@@ -189,7 +192,8 @@ def schedule_add():
             new_schedule = ScheduleContent(
                 content_id=content.id,
                 channel_id=content.channel_id,
-                datetime_pub=form.datetime_pub.data
+                date_pub=form.datetime_pub.data.date(),
+                time_pub=form.datetime_pub.data.time()
             )
             db.session.add(new_schedule)
             db.session.commit()
@@ -289,7 +293,7 @@ def content_schedule(id):
         current_channel = None
 
     content_schedule_pagination = get_content_schedule(current_channel, page=page)
-
+    print(content_schedule_pagination.items[0].__dict__)
     table_head = get_content_schedule_table_head()
     table_row = get_content_schedule_table_body(content_schedule_pagination.items)
 

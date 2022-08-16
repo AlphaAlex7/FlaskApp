@@ -17,7 +17,7 @@
                     <tbody id="table_body">
                     {% for tr in table_row %}
                         <tr class="table-row"  data-href="{{  url_for('statistic.content_detail') }}?id_post={{tr.id}}&id_channel={{ id }}" >
-                            <td>{{ tr.time_pub.strftime('%d.%m.%Y %H:%M') }}</td>
+                            <td>{{ tr.datetime_pub.strftime('%d.%m.%Y %H:%M') }}</td>
                             <td>
                                 {{ tr.content_type }}
                             </td>

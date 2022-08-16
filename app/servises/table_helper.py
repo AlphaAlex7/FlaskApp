@@ -1,3 +1,6 @@
+from datetime import datetime
+
+
 def get_content_table_head():
     table_head = [
         {'name': 'Заголовок', "id": "title"},
@@ -56,7 +59,10 @@ def get_regular_schedule_table_body(content):
 
 def get_content_schedule_table_body(content):
     table_row = [{"id": element.content.id,
-                  "time_pub": element.datetime_pub,
+                  "datetime_pub": datetime.combine(
+                      element.date_pub,
+                      element.time_pub
+                  ),
                   "content_type": element.content.title
                   }
                  for element in content]
