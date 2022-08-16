@@ -13,21 +13,50 @@ from ..models import User
 
 
 class LoginForm(FlaskForm):
-    email = StringField('Почта', validators=[DataRequired(), Length(1, 64)])
-    password = PasswordField('Пароль', validators=[DataRequired()])
+    email = StringField(
+        'Почта',
+        validators=[DataRequired(), Length(1, 64)]
+    )
+    password = PasswordField(
+        'Пароль',
+        validators=[DataRequired()]
+    )
     remember_me = BooleanField('Оставаться в сети')
     submit = SubmitField('Войти')
 
 
 class RegistrationForm(FlaskForm):
-    email = StringField('Почта', validators=[DataRequired(), Length(1, 64)])
+    email = StringField(
+        'Почта',
+        validators=[DataRequired(), Length(1, 64)]
+    )
 
-    username = StringField('Имя пользователя', validators=[
-        DataRequired(), Length(1, 64), Regexp('^[A-Za-z][A-Za-z0-9_.]*$', 0,
-                                              'Имя пользователя должно состоять из латинских букв и цифр')])
-    password = PasswordField('Пароль',
-                             validators=[DataRequired(), EqualTo('password2', message='Пароли не совпадают')])
-    password2 = PasswordField('Подтвердить пароль', validators=[DataRequired()])
+    username = StringField(
+        'Имя пользователя',
+        validators=[
+            DataRequired(),
+            Length(1, 64),
+            Regexp(
+                '^[A-Za-z][A-Za-z0-9_.]*$',
+                0,
+                'Имя пользователя должно состоять из латинских букв и цифр'
+            )
+        ]
+    )
+    password = PasswordField(
+        'Пароль',
+        validators=[
+            DataRequired(),
+            EqualTo(
+                'password2',
+                message='Пароли не совпадают'
+            )
+        ]
+    )
+    password2 = PasswordField(
+        'Подтвердить пароль',
+        validators=[DataRequired()]
+    )
     submit = SubmitField('Зарегистрироваться')
 
     def validate_email(self, field):
