@@ -3,18 +3,19 @@ from sqlalchemy import or_, and_
 from ..models import ScheduleRegular, ScheduleContent, db
 
 
-def content_to_pub(hour):
-    irregular_query = get_irregular_query(hour=hour)
+def content_to_pub(*, hours=1, minutes=0):
+    irregular_query = get_irregular_query(hours=hours, minutes=minutes)
     irregular = irregular_query.all()
     regular = get_schedule_regular(
         subquery=irregular_query.subquery(),
-        hour=hour
+        hours=hours,
+        minutes=minutes
     )
     return regular, irregular
 
 
-def get_schedule_regular(*, subquery=None, hour: int = 1):
-    time_from, time_to = time_interval(hour=hour)
+def get_schedule_regular(*, subquery=None, hours: int = 1, minutes: int = 0):
+    time_from, time_to = time_interval(hours=hours, minutes=minutes)
     if subquery is not None:
         schedule_regular = db.session.query(
             ScheduleRegular, subquery.c.id
@@ -51,15 +52,15 @@ def get_schedule_regular(*, subquery=None, hour: int = 1):
         return schedule_regular.all()
 
 
-def get_irregular(*, query=None, hour: int = 1):
+def get_irregular(*, query=None, hours: int = 1):
     if query:
         return query.all()
     else:
-        return get_irregular_query(hour=hour).all()
+        return get_irregular_query(hours=hours).all()
 
 
-def get_irregular_query(hour: int = 1):
-    date_from, date_to = date_interval(hour=hour)
+def get_irregular_query(hours: int = 1, minutes: int = 0):
+    date_from, date_to = date_interval(hours=hours, minutes=minutes)
     if date_from.time() > date_to.time():
         irregular = db.session.query(ScheduleContent) \
             .filter(
@@ -87,26 +88,29 @@ def get_irregular_query(hour: int = 1):
     return irregular
 
 
-def time_interval(*, hour: int = 1):
-    return get_time_now(), get_time_now(increment_hour=hour)
+def time_interval(*args, **kwargs):
+    return get_time_next(), get_time_next(*args, **kwargs)
 
 
-def date_interval(*, hour: int = 1):
-    return get_datetime_now(), get_datetime_now(increment_hour=hour)
+def date_interval(*args, **kwargs):
+    return get_datetime_now(), get_datetime_now(*args, **kwargs)
 
 
-def get_datetime_increment(increment_hour: int = 0):
-    return datetime.datetime.today() + datetime.timedelta(
-        hours=increment_hour)
+def get_datetime_increment(*args, **kwargs):
+    hours = kwargs.get("hours", 0)
+    minutes = kwargs.get("minutes", 0)
+    result_time = datetime.datetime.today() \
+                  + datetime.timedelta(hours=hours, minutes=minutes)
+    return result_time
 
 
-def get_time_now(increment_hour: int = 0):
-    now = get_datetime_increment(increment_hour=increment_hour)
-    return datetime.time(hour=now.hour)
+def get_time_next(*args, **kwargs):
+    now = get_datetime_increment(*args, **kwargs)
+    return datetime.time(hour=now.hour, minute=now.minute)
 
 
-def get_datetime_now(increment_hour: int = 0):
-    now = get_datetime_increment(increment_hour=increment_hour)
+def get_datetime_now(*args, **kwargs):
+    now = get_datetime_increment(*args, **kwargs)
     date_now = datetime.date(year=now.year, month=now.month, day=now.day)
-    time_now = datetime.time(hour=now.hour)
+    time_now = datetime.time(hour=now.hour, minute=now.minute)
     return datetime.datetime.combine(date_now, time_now)

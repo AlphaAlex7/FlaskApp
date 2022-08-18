@@ -13,3 +13,4 @@ Jinja2
 redis==4.3.1
 celery==5.2.6
 psycopg2-binary
+pyTelegramBotAPI==3.7.7
